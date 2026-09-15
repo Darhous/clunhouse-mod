@@ -18,6 +18,7 @@ const { createLogBuffer } = require('./lib/logBuffer');
 const { resolveRoomLink } = require('./lib/roomLink');
 const { createChatReceipts } = require('./lib/chatReceipts');
 const { createRoomConnection } = require('./lib/roomConnection');
+const appPromo = require('./lib/appPromo');
 const roomConnection = createRoomConnection({ poller, getProfile: account.getActiveProfile, join: actions.joinChannel, leave: (channel) => apiPost('/leave_channel', { channel }) });
 const fullApiLog = createLogBuffer();
 const roomChat = createRoomChat({
