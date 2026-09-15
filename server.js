@@ -1477,6 +1477,6 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`Clubhouse mod by Darhous شغال على http://localhost:${PORT}`);
   friendsWatcher.start();
+  appPromo.announce(PORT);
 });
