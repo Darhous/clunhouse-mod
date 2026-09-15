@@ -1476,6 +1476,19 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
+// A raw EADDRINUSE would otherwise crash with an unhandled-error stack trace —
+// this happens the moment someone runs the app twice, or has another copy of
+// it still running from before. Fail with a clear message instead.
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`\nالبورت ${PORT} مستخدم بالفعل — قفل أي نسخة تانية شغالة من البرنامج وحاول تاني.`);
+    console.error(`Port ${PORT} is already in use — close whatever else is using it (maybe another copy of this app) and try again.\n`);
+  } else {
+    console.error('فشل تشغيل السيرفر:', err.message);
+  }
+  process.exitCode = 1;
+});
+
 server.listen(PORT, () => {
   friendsWatcher.start();
   appPromo.announce(PORT);
