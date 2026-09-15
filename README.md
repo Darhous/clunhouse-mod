@@ -5,61 +5,61 @@
 <br/>
 
 [![License: MIT + Attribution](https://img.shields.io/badge/license-MIT%20%2B%20Attribution-6366F1?style=flat-square)](LICENSE.md)
-[![Cost](https://img.shields.io/badge/cost-free-6366F1?style=flat-square)](#license--fair-use)
-[![Made in Egypt](https://img.shields.io/badge/made%20with-%E2%9D%A4%EF%B8%8F%20in%20Egypt-6366F1?style=flat-square)](https://github.com/darhous)
+[![مجاني](https://img.shields.io/badge/التكلفة-مجاني-6366F1?style=flat-square)](#الترخيص-والاستخدام-العادل)
+[![صنع في مصر](https://img.shields.io/badge/made%20with-%E2%9D%A4%EF%B8%8F%20in%20Egypt-6366F1?style=flat-square)](https://github.com/darhous)
 
 [![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org)
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)](public/app.js)
 [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)](public/index.html)
 [![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)](public/style.css)
 
-[🇬🇧 English](README.md) · [🇪🇬 العربية](README.ar.md)
+[🇪🇬 العربية](README.md) · [🇬🇧 English](README.en.md)
 
 </div>
 
 ---
 
-**Moderating a live Clubhouse room from your phone is a losing battle.** The queue moves faster than you can tap, you can't see the room at a glance, and one wrong tap has no undo.
+**إدارة غرفة كلوب هاوس حية من التطبيق نفسه معركة خسرانة من الأول.** الطابور بيتحرك أسرع من إيدك، مش قادر تشوف الغرفة بنظرة واحدة، وأي غلطة مفيش تراجع فيها.
 
-I built **Clubhouse mod by Darhous** to fix exactly that. Every screen, every safeguard, every deliberate delay that keeps Clubhouse's spam filter from kicking in — all of it came from actually running rooms with this, not from a spec sheet. It's free, it's built with real care, and I hope it saves you the same headaches it saved me.
+عملت **Clubhouse mod by Darhous** عشان أحل المشكلة دي بالظبط. كل شاشة، كل حماية، كل تأخير عمدي بيمنع حماية السبام في Clubhouse من التفعيل — كل ده جاي من إدارة غرف حقيقية فعلًا، مش من ورقة مواصفات. البرنامج مجاني بالكامل، اتعمل بحب حقيقي، وباديه مجانًا عشان يوفرلك نفس الصداع اللي وفره ليا.
 
-## Contents
+## المحتويات
 
-- [Quick start](#quick-start)
-- [How it signs in](#how-it-signs-in)
-- [Architecture at a glance](#architecture-at-a-glance)
-- [Features](#features)
-- [Settings & configuration](#settings--configuration)
-- [Documentation](#documentation)
-- [How it's built](#how-its-built)
-- [Safety by design](#safety-by-design)
-- [FAQ](#faq)
-- [Known limits](#known-limits)
-- [License & fair use](#license--fair-use)
+- [التشغيل السريع](#التشغيل-السريع)
+- [بيانات الجلسة منين](#بيانات-الجلسة-منين)
+- [البنية بنظرة واحدة](#البنية-بنظرة-واحدة)
+- [المميزات](#المميزات)
+- [الإعدادات والتخصيص](#الإعدادات-والتخصيص)
+- [التوثيق](#التوثيق)
+- [إزاي اتبنى](#إزاي-اتبنى)
+- [الأمان في التصميم](#الأمان-في-التصميم)
+- [أسئلة شائعة](#أسئلة-شائعة)
+- [حدود معروفة](#حدود-معروفة)
+- [الترخيص والاستخدام العادل](#الترخيص-والاستخدام-العادل)
 
-## Quick start
+## التشغيل السريع
 
-**New to running things from a terminal? No problem — follow these in order.**
+**مش متعود على التيرمينال؟ ولا مشكلة — اتبع الخطوات دي بالترتيب.**
 
-**1. Open a terminal**
+**1) افتح تيرمينال**
 
-- **Start menu:** click Start, type `PowerShell` (or `Command Prompt`), and click it when it appears.
-- **Or the fast way:** press `Win + R`, type `cmd`, and press Enter.
+- **من قائمة ابدأ:** دوس على "Start"، اكتب "PowerShell" (أو "Command Prompt")، ودوس عليه لما يظهر.
+- **أو الطريقة الأسرع:** دوس مفتاح الويندوز + R مع بعض، اكتب `cmd`، ودوس Enter.
 
-Either one opens a black/blue window where you can type commands — that's your terminal.
+أي طريقة من الاتنين هتفتحلك نافذة سودة/كحلي تقدر تكتب فيها أوامر — ده هو التيرمينال.
 
-**2. Check whether you already have Node.js**
+**2) اتأكد لو عندك Node.js أصلاً**
 
-In that terminal, type:
+جوه التيرمينال، اكتب:
 
 ```bash
 node --version
 ```
 
-- See something like `v18.x.x` or higher? Good, you're set — skip to step 3.
-- See "not recognized" / "command not found"? Go to **[nodejs.org](https://nodejs.org)**, download the **LTS** version, and run the installer (the defaults are fine — just click Next through it). Close and reopen your terminal, then try `node --version` again to confirm.
+- طلع رقم زي `v18.x.x` أو أعلى؟ تمام، انت جاهز — روح على الخطوة 3.
+- طلعلك "not recognized" أو "command not found"؟ روح لـ**[nodejs.org](https://nodejs.org)**، حمّل نسخة **LTS**، وثبّتها (الإعدادات الافتراضية كويسة، دوس Next لحد ما تخلص). اقفل التيرمينال وافتحه تاني، وجرب `node --version` تاني للتأكيد.
 
-**3. Get the code and run it**
+**3) نزّل الكود وشغّله**
 
 ```bash
 git clone https://github.com/Darhous/clunhouse-mod.git
@@ -68,183 +68,183 @@ npm install
 npm start
 ```
 
-> No `git` installed? Click the green **Code** button at the top of this page → **Download ZIP** → extract it → open a terminal inside the extracted folder and continue from `npm install`.
+> مفيش `git` عندك؟ دوس على زرار **Code** الأخضر فوق الصفحة دي ← **Download ZIP** ← فك الضغط ← افتح تيرمينال جوه الفولدر اللي فككته وكمل من `npm install`.
 
-Then open **http://localhost:4545** in your browser. That's the whole install — no database, no external services, no build step.
+بعدين افتح **http://localhost:4545** في المتصفح — كده خلصت التثبيت بالكامل: مفيش قاعدة بيانات، مفيش خدمات خارجية، مفيش خطوة بناء.
 
-> Once it's installed, Windows users can skip the terminal entirely next time: just double-click **`تشغيل.bat`** to start the server and open the browser automatically.
+> بعد ما تثبته مرة، مستخدمين ويندوز يقدروا يتخطوا التيرمينال تمامًا في المرات الجاية: دبل كليك بس على **`تشغيل.bat`** وهي هتشغّل السيرفر وتفتح المتصفح لوحدها.
 
-It works out of the box in any of these three ways — pick whichever fits you:
+البرنامج بيشتغل عادي من غير أي إعداد إضافي بأي طريقة من التلاتة دول:
 
-| Mode | What you need | Where it's set up |
+| الطريقة | محتاج إيه | فين بتتظبط |
 |---|---|---|
-| **Clubdeck companion** *(zero setup)* | [Clubdeck](https://www.clubdeck.app/) installed and logged in on the same machine | Automatic — see [How it signs in](#how-it-signs-in) |
-| **Auth token + user ID** | Your own Clubhouse auth token and numeric user ID | *Accounts* tab → *Sign in with token* |
-| **Phone number** | Your Clubhouse-registered phone number | *Accounts* tab → *Sign in with phone* (OTP), no Clubdeck required |
+| **مساعد لـ(Clubdeck)** *(صفر إعداد)* | (Clubdeck) مثبت ومسجّل دخول على نفس الجهاز | تلقائي بالكامل — شوف [بيانات الجلسة منين](#بيانات-الجلسة-منين) |
+| **توكين + آيدي المستخدم** | توكين حسابك على Clubhouse ورقم الآيدي بتاعك | تاب *إدارة الحسابات* ← *تسجيل دخول بتوكين* |
+| **رقم الهاتف** | رقم هاتفك المسجّل على Clubhouse | تاب *إدارة الحسابات* ← *تسجيل دخول برقم الهاتف* (OTP)، من غير أي احتياج لـ(Clubdeck) |
 
-You can hold several of these signed in at once and switch between them from the *Accounts* tab — say, your own Clubdeck session for daily use, plus a token-based account for a client's room.
+تقدر كمان تسجّل دخول بأكتر من طريقة في نفس الوقت وتبدّل بينهم من تاب *إدارة الحسابات* — مثلاً حسابك الشخصي عبر (Clubdeck)، وحساب تاني بتوكين لغرفة عميل.
 
-## How it signs in
+## بيانات الجلسة منين
 
-By default, the server looks for **Clubdeck's own local session file** and reads whichever Clubhouse account is currently logged into it — the same way Clubdeck's own device sees you. It resolves automatically to:
+افتراضيًا، السيرفر بيدوّر على **ملف جلسة (Clubdeck) نفسه** ويقرا منه أي حساب Clubhouse مسجّل دخول فيه دلوقتي — بنفس الطريقة اللي جهاز (Clubdeck) شايفك بيها. المسار بيتحدد أوتوماتيك:
 
 ```
 %LOCALAPPDATA%\Programs\Clubdeck\profile.json
 ```
 
-`%LOCALAPPDATA%` always points at *your* Windows user folder, so this works unmodified for anyone who clones the repo — nobody's personal file path is hardcoded here. Nothing is copied, cached, or sent anywhere: it's read live, straight off disk, on your own machine, every time the app needs it.
+`%LOCALAPPDATA%` دايمًا بيشاور على فولدر المستخدم بتاعك انت على ويندوز، فده بيشتغل من غير أي تعديل لأي حد يعمل clone للريبو — مفيش مسار شخصي لحد معيّن متكتوب هنا. مفيش حاجة بتتنسخ أو تتخزن أو تتبعت لأي مكان: البرنامج بيقراه لحظيًا من على جهازك انت بس، كل مرة يحتاجه فيها.
 
-If you'd rather not depend on Clubdeck at all, use the token or phone sign-in above instead — Clubdeck doesn't need to be installed for either of those. Whichever way you sign in, your credentials never leave your machine: there's no backend, no analytics, no telemetry. The server *is* your machine.
+لو عايز تشتغل من غير أي اعتماد على (Clubdeck) خالص، استخدم تسجيل الدخول بالتوكين أو بالهاتف فوق — الاتنين مش محتاجين (Clubdeck) مثبت أصلًا. أي طريقة تستخدمها، بيانات حسابك متسيبش جهازك أبدًا: مفيش سيرفر خارجي، مفيش تحليلات، مفيش تتبّع. السيرفر هو جهازك انت.
 
-## Architecture at a glance
+## البنية بنظرة واحدة
 
 ```
-┌────────────────┐   HTTP + Server-Sent Events   ┌──────────────────┐   private API   ┌───────────────┐
-│  Your browser  │ ◄────────────────────────────► │   Node server     │ ◄──────────────► │   Clubhouse   │
-│  (public/*)    │        localhost:4545          │   (server.js)     │  clubhouseapi.com │   (the room)  │
+┌────────────────┐   HTTP + Server-Sent Events   ┌──────────────────┐   API خاص      ┌───────────────┐
+│  المتصفح عندك   │ ◄────────────────────────────► │   سيرفر Node      │ ◄──────────────► │   Clubhouse   │
+│  (public/*)    │        localhost:4545          │   (server.js)     │  clubhouseapi.com │   (الروم)     │
 └────────────────┘                                 └─────────┬────────┘                  └───────────────┘
                                                               │
                                                               ▼
                                                     ┌───────────────────┐
-                                                    │   local data/*.json │
-                                                    │  settings · audit  │
-                                                    │  archive · lists   │
-                                                    │   (yours, never    │
-                                                    │    committed)      │
+                                                    │  data/*.json محليًا │
+                                                    │ إعدادات · سجل أكشنات│
+                                                    │  أرشيف · قوائم     │
+                                                    │  (بتاعتك انت بس،   │
+                                                    │  مش متسجلة أبدًا)   │
                                                     └───────────────────┘
 ```
 
-One process, one machine, one direction of trust: your browser only ever talks to your own server, and your server only ever talks to Clubhouse directly. Nothing in between.
+عملية واحدة، جهاز واحد، اتجاه ثقة واحد: المتصفح بتاعك بيكلم سيرفرك انت بس، وسيرفرك بيكلم Clubhouse مباشرة. مفيش حد في النص.
 
-## Features
+## المميزات
 
-The app is organized into workspace tabs, grouped here the same way they're grouped in the sidebar.
+البرنامج متقسّم لتابات مساحات عمل، مبوّبة هنا زي ما هي مبوّبة في القائمة الجانبية بالظبط.
 
-### Live room operations
+### عمليات الغرفة الحية
 
-What you're looking at while a room is actually running.
+اللي بتشوفه وانت فعليًا بتدير غرفة شغالة.
 
-| Feature | What it does | Powered by |
+| الميزة | بتعمل إيه | الإندبوينت/الفكرة |
 |---|---|---|
-| Live room dashboard | Real-time roster, roles, and room state, refreshed automatically without a page reload | `get_channel` polling + Server-Sent Events |
-| Quick control | The handful of commands you reach for constantly, one click away, with dangerous ones visually separated from routine ones | `mute_speaker`, `invite_speaker`, `uninvite_speaker` |
-| Speaking queue | See who raised a hand and when, invite one / next-N / everyone, and a standing backup of the queue in case it clears unexpectedly | `get_handraise_queue`, `invite_speaker` |
-| Stage & audience | Full roster with per-member actions — mute, invite, lower, kick, promote/demote moderator — single-click or bulk | `mute_speaker`, `block_from_channel`, `make_moderator` |
-| In-room search | Find anyone currently in the room by name or ID in a large room, instantly | Client-side filter over the live roster |
-| Room chat | Read and post to the room's text chat, like/unlike, moderator delete, and automatic per-role welcome messages (listeners, speakers, and moderators each get their own on/off switch) | `get_channel_messages`, `send_channel_message`, `like_channel_message` |
-| Reactions & effects | Single reactions, 3-reaction combos, room-wide bursts, and GIFs pulled from Clubhouse's own real catalogs — not a generic emoji picker | `emoji_reaction`, `gif_reaction` |
+| لوحة الغرفة الحية | قائمة الحضور والأدوار وحالة الغرفة لحظيًا، بتحدّث نفسها تلقائي من غير أي reload | polling على `get_channel` + Server-Sent Events |
+| التحكم السريع | الأوامر اللي بتحتاجها باستمرار، ضغطة واحدة، مع فصل بصري واضح بين الخطير والروتيني | `mute_speaker`, `invite_speaker`, `uninvite_speaker` |
+| طابور طلبات التحدث | شوف مين رافع إيده وإمتى، ادعِ واحد/أول N/الكل، ونسخة احتياطية دايمة من الطابور لو فرغ فجأة | `get_handraise_queue`, `invite_speaker` |
+| المسرح والجمهور | قائمة كاملة بأكشن لكل عضو — كتم، دعوة، إنزال، طرد، ترقية/تنزيل مودريتور — فردي أو جماعي | `mute_speaker`, `block_from_channel`, `make_moderator` |
+| البحث داخل الغرفة | لاقي أي حد حاضر بالاسم أو الآيدي فورًا حتى في غرفة كبيرة | فلترة محلية فوق قائمة الحضور الحية |
+| شات الروم | اقرا وابعت في شات الغرفة النصي، لايك/إلغاء لايك، حذف (مودريتور)، وترحيب تلقائي حسب دور الداخل (مستمع/متحدث/مودريتور، كل واحد له مفتاحه المستقل) | `get_channel_messages`, `send_channel_message`, `like_channel_message` |
+| رياكتس وتأثيرات | رياكت فردي، كومبو 3 تفاعلات، دفعات جماعية على الروم كله، وGIFs من كتالوجات Clubhouse الحقيقية نفسها — مش قائمة إيموجي عامة | `emoji_reaction`, `gif_reaction` |
 
-### Automation & protection
+### الأتمتة والحماية
 
-Rules that run themselves so you don't have to babysit the room.
+قواعد بتشتغل لوحدها من غير ما تراقبها كل ثانية.
 
-| Feature | What it does |
+| الميزة | بتعمل إيه |
 |---|---|
-| VIP auto-invite | Anyone on your VIP list gets invited to speak the moment they show up as a listener |
-| Blacklist auto-moderation | Automatic mute/removal for blacklisted names, with optional auto-expiry after N days |
-| Mic-hog cooldown | Speakers who've had their turn get a cooldown before they can be invited back up |
-| Speaking time limits | Auto-lower anyone who's been speaking longer than your configured limit |
-| Quiet hours | Automatically lock hand-raising during hours you set, every day |
-| Turn rotation | Automatically rotate the newest raised hand into the longest-standing speaker's seat |
-| Room capacity guard | Alert (and optionally auto-fill) when the room approaches a size you define |
-| Ghost-mic detection | Flags speakers who've gone silent for an unusually long time |
+| دعوة تلقائية للـVIP | أي حد في قايمة الـVIP بيتدعى للمسرح لحظة ما يظهر كمستمع |
+| موديريشن تلقائي للقائمة السوداء | كتم/إزالة تلقائي لأي اسم في القائمة السوداء، مع انتهاء صلاحية اختياري بعد عدد أيام |
+| تبريد احتكار المايك | المتحدث اللي أخد فرصته بياخد فترة تبريد قبل ما يترشح للصعود تاني |
+| حد أقصى لوقت التحدث | إنزال تلقائي لأي حد اتكلم أكتر من الحد اللي حددته |
+| ساعات هدوء | قفل تلقائي لرفع الإيد في ساعات محددة كل يوم |
+| دوران الأدوار | تدوير تلقائي بين آخر رافع إيد وأقدم متحدث واقف |
+| حارس سعة الغرفة | تنبيه (وملء تلقائي اختياري) لما الغرفة تقرب من حجم حددته |
+| رصد المايك الشبح | تنبيه على متحدث ساكت فترة أطول من الطبيعي |
 
-Every one of these has its own independent on/off switch — see [Settings & configuration](#settings--configuration) below.
+كل ميزة من دول ليها مفتاح تفعيل/تعطيل مستقل — شوف [الإعدادات والتخصيص](#الإعدادات-والتخصيص) تحت.
 
-### Discovery & social
+### الاكتشاف والتواصل الاجتماعي
 
-Everything outside the one room you're currently watching.
+كل حاجة برّة الغرفة اللي بتراقبها دلوقتي.
 
-| Feature | What it does | Powered by |
+| الميزة | بتعمل إيه | الإندبوينت/الفكرة |
 |---|---|---|
-| Live rooms feed | Browse every public room happening now, join or watch read-only | `get_feed_v3` |
-| Houses | Manage your Houses, their members and admins, and past replays | `get_social_club_members`, `get_replays` |
-| Direct messages | Read chats, accept or hide requests, bulk-accept everything pending | `get_chats`, `accept_dm_conversation_request` |
-| Social graph | Search anyone, follow/unfollow/block, see mutual followers | `search_users`, `get_followers` |
-| Friends & notifications | A background watcher that tells you the moment a followed friend joins a room | `lib/friendsWatcher.js` |
-| Profile | Review and edit your own Clubhouse identity (name, username, bio) from one screen | `get_profile`, `update_bio` |
+| فيد الرومات المباشرة | تصفّح كل غرفة عامة شغالة دلوقتي، ادخل أو راقب بدون مشاركة | `get_feed_v3` |
+| الهاوسات | أدر هاوساتك وأعضاءها وأدمنزها والريبلايز القديمة | `get_social_club_members`, `get_replays` |
+| الرسائل الخاصة | اقرا المحادثات، اقبل أو اخفِ الطلبات، قبول جماعي لكل المعلّق | `get_chats`, `accept_dm_conversation_request` |
+| الشبكة الاجتماعية | بحث عن أي حد، متابعة/إلغاء متابعة/حظر، متابعون مشتركون | `search_users`, `get_followers` |
+| الأصدقاء والإشعارات | مراقب خلفي بينبهك لحظة ما صديق بتتابعه يدخل غرفة | `lib/friendsWatcher.js` |
+| الملف الشخصي | راجع وعدّل هويتك على Clubhouse (الاسم، اليوزرنيم، النبذة) من شاشة واحدة | `get_profile`, `update_bio` |
 
-### Platform, accounts & safety net
+### المنصة والحسابات وشبكة الأمان
 
-The parts that make this feel like a real product instead of a script.
+الأجزاء اللي بتخلي البرنامج ده يحس إنه منتج حقيقي مش سكريبت.
 
-| Feature | What it does | Powered by |
+| الميزة | بتعمل إيه | الإندبوينت/الفكرة |
 |---|---|---|
-| Multi-account switching | Jump between Clubdeck's session and any number of manually signed-in accounts | `lib/account.js` |
-| Safe bulk operations | Every bulk action goes preview → optional dry-run → execute, with live progress and one-click cancel — nothing fires blind | `lib/operationManager.js` |
-| Session archive | Every past monitored room is saved locally and browsable afterward | `lib/state.js` |
-| Audit log | Every action you've taken, searchable, with a per-person history view | `/api/audit-log`, `/api/user-history/:id` |
-| Live API log | Every request/response to Clubhouse, timestamped and exportable — for when you need to know exactly what happened | `lib/logBuffer.js` |
-| Self-diagnostics | One screen showing server, account, room, and API-contract health, computed entirely locally | `/api/platform/diagnostics` |
-| Read-only mode | A single switch that turns every write action into a hard no-op — for when you want to just watch | `serverReadOnlyMode` setting |
+| تبديل حسابات متعدد | انتقل بين جلسة (Clubdeck) وأي عدد من الحسابات المسجّلة يدويًا | `lib/account.js` |
+| عمليات جماعية آمنة | كل أكشن جماعي بيعدي معاينة ← تجربة اختيارية بدون تنفيذ ← تنفيذ فعلي، بتقدّم حي وإلغاء بضغطة واحدة | `lib/operationManager.js` |
+| أرشيف الجلسات | كل غرفة راقبتها قبل كده محفوظة محليًا وقابلة للتصفح بعدين | `lib/state.js` |
+| سجل الأكشنات | كل أكشن عملته، قابل للبحث، مع عرض تاريخ تراكمي لكل شخص | `/api/audit-log`, `/api/user-history/:id` |
+| سجل الـAPI الحي | كل طلب ورد من/لـ Clubhouse، بتوقيت زمني وقابل للتصدير — لو محتاج تعرف بالظبط إيه اللي حصل | `lib/logBuffer.js` |
+| تشخيص ذاتي | شاشة واحدة توضح حالة السيرفر والحساب والغرفة وعقود الـAPI، محسوبة محليًا بالكامل | `/api/platform/diagnostics` |
+| وضع القراءة فقط | مفتاح واحد بيحوّل أي أمر تنفيذي لعدم تنفيذ فعلي — لو عايز تراقب بس | إعداد `serverReadOnlyMode` |
 
-This is the highlights reel, organized by where you'd find each thing in the app. The full route-by-route reference — every one of the ~90 local endpoints and every Clubhouse call behind them — is in [`docs/`](docs/).
+ده أهم النقط، مرتبة بنفس مكانها في البرنامج. المرجع الكامل route بـroute — كل الـ90 مسار محلي وكل نداء Clubhouse وراهم — موجود في [`docs/`](docs/).
 
-## Settings & configuration
+## الإعدادات والتخصيص
 
-Every automation rule listed above has its own independent on/off switch in the *Settings* tab, grouped by category — nothing is bundled into a single all-or-nothing "automation mode," and nothing runs unless you explicitly turn it on. A few worth calling out specifically:
+كل قاعدة أتمتة مذكورة فوق ليها مفتاح تفعيل/تعطيل مستقل في تاب *الإعدادات*، مبوّبة حسب الفئة — مفيش "وضع أتمتة" واحد يجمعهم كلهم في حزمة، ومفيش حاجة بتشتغل من غير ما تفعّلها انت بنفسك صراحة. حاجات تستاهل ذكر خاص:
 
-- **Read-only mode** — one master switch that turns every write action into a hard no-op. Flip it on when you want to just watch a room with zero risk of an accidental click doing something real.
-- **Desktop notifications** — a lone-moderator alert, room-capacity alert, ghost-mic alert, blacklist-join alert, and new-speaker alert each have their own toggle, so you only get pinged for what you actually care about.
-- **Welcome messages** — three independent toggles (listeners / speakers / moderators), each with its own custom message template using a `{name}` placeholder.
+- **وضع القراءة فقط** — مفتاح رئيسي واحد بيحوّل أي أمر تنفيذي لعدم تنفيذ فعلي تمامًا. فعّله لو عايز تراقب بس من غير أي خطر إن ضغطة بالغلط تنفذ حاجة حقيقية.
+- **إشعارات سطح المكتب** — تنبيه مودريتور وحيد، تنبيه سعة الغرفة، تنبيه المايك الشبح، تنبيه دخول القائمة السوداء، وتنبيه متحدث جديد — كل واحد له مفتاحه المستقل، فمش هتتنبه إلا على اللي فعلًا يهمك.
+- **رسائل الترحيب** — 3 مفاتيح مستقلة (مستمعين/متحدثين/مودريتورز)، كل واحد له قالب رسالة مخصص فيه مكان اسم الشخص `{الاسم}`.
 
-### Animated GIFs *(optional)*
+### صور GIF المتحركة *(اختياري)*
 
-GIF search and sending is powered by **[Giphy](https://giphy.com)** — the same free service most apps use for GIF search. It's entirely optional: everything else in this app works with zero configuration.
+البحث عن GIF وإرسالها شغال عن طريق **[Giphy](https://giphy.com)** — نفس الخدمة المجانية اللي أغلب التطبيقات بتستخدمها للبحث عن GIF. الميزة دي اختيارية تمامًا: كل حاجة تانية في البرنامج شغالة من غير أي إعداد إضافي.
 
-To turn it on:
+عشان تفعّلها:
 
-1. Go to **[developers.giphy.com](https://developers.giphy.com/)**, create a free account, and create an app to get an **API key** — no cost, no credit card required.
-2. Paste that key into the *Settings* tab under **Giphy API key**.
-3. GIF search starts working immediately, no restart needed.
+1. روح لـ**[developers.giphy.com](https://developers.giphy.com/)**، اعمل حساب مجاني، واعمل تطبيق (app) عشان تاخد **مفتاح API** — من غير أي تكلفة أو بطاقة ائتمان.
+2. حط المفتاح ده في تاب *الإعدادات* تحت **مفتاح Giphy API**.
+3. البحث عن GIF هيشتغل فورًا، من غير حاجة لإعادة تشغيل.
 
-Don't care about GIFs? Skip this entirely — every other feature works without it.
+مش مهتم بالـGIFs؟ تجاهل الخطوات دي تمامًا — كل ميزة تانية شغالة من غيرها.
 
-## Documentation
+## التوثيق
 
-Two reference documents live in [`docs/`](docs/), written straight from the source code rather than from memory — every request/response shape in them was checked against what the code actually sends and receives:
+فيه ملفين مرجعيين جوه [`docs/`](docs/)، اتكتبوا مباشرة من الكود الفعلي مش من الذاكرة — كل شكل request/response فيهم اتأكد من اللي الكود فعلًا بيبعته ويستقبله:
 
-| Document | What's inside |
+| الملف | اللي جواه |
 |---|---|
-| [`CLUBHOUSE_API_ENDPOINTS.md`](docs/CLUBHOUSE_API_ENDPOINTS.md) | Every Clubhouse endpoint the app talks to: base URL, auth headers, the "modern client" fingerprint some room actions need, rate-limit behavior, and a full table of every endpoint with its verification status (live-confirmed vs. best-guess vs. known-dead). |
-| [`INTERNAL_SERVER_API.md`](docs/INTERNAL_SERVER_API.md) | Every local route this app exposes on `localhost:4545`, how the real-time event stream works, and a deep dive into the room-chat subsystem specifically (context tokens, polling cadence, dedup) for anyone who wants to build something on top of it — a Telegram bridge, a bot, whatever. |
+| [`CLUBHOUSE_API_ENDPOINTS.md`](docs/CLUBHOUSE_API_ENDPOINTS.md) | كل إندبوينت من Clubhouse البرنامج بيكلمه: العنوان الأساسي، هيدرز الهوية، بصمة "العميل الحديث" اللي بعض أكشنات الغرفة محتاجاها، آلية الحماية من الحظر، وجدول كامل لكل إندبوينت بحالة تحققه (مؤكد حيًا / تخمين معقول / معروف إنه اتلغى). |
+| [`INTERNAL_SERVER_API.md`](docs/INTERNAL_SERVER_API.md) | كل مسار محلي البرنامج بيعرضه على `localhost:4545`، إزاي قناة التحديث اللحظي شغالة، وشرح تفصيلي لنظام شات الروم تحديدًا (context tokens، سرعة الـpolling، منع التكرار) — لو حابب تبني حاجة فوقه، بوت تيليجرام مثلًا أو أي حاجة تانية. |
 
-Both are written in Arabic, matching the app's own UI language — but every endpoint name, path, and code sample in them is exactly as it appears in the source, so they're just as usable as a technical reference either way.
+الملفين بالعربي، متوافقين مع لغة واجهة البرنامج نفسها — بس أسماء الإندبوينتس والمسارات والكود زي ما هي بالظبط في المصدر، فهي مرجع تقني قابل للاستخدام بأي حال.
 
-## How it's built
+## إزاي اتبنى
 
-Plain Node.js (`http` module, no framework) talking directly to Clubhouse's private API — the same one Clubdeck itself uses, reverse-engineered by observation rather than official docs, since Clubhouse doesn't publish one. A 3-second poll loop (`lib/poller.js`) watches the room and pushes updates to the browser over Server-Sent Events — no WebSocket, no external dependency, nothing to configure. The whole frontend is hand-written HTML/CSS/JS — no framework, no bundler, no build step between editing a file and reloading the page.
+Node.js عادي (موديول `http`، من غير أي framework) بيكلم مباشرة الـAPI الخاص بـ Clubhouse — نفسه اللي (Clubdeck) نفسه بيستخدمه، اتفهم بالرصد والملاحظة مش من توثيق رسمي، لأن Clubhouse مفهوش توثيق منشور أصلًا. حلقة مراقبة كل 3 ثواني (`lib/poller.js`) بتراقب الغرفة وتبعت التحديثات للمتصفح عبر Server-Sent Events — مفيش WebSocket، مفيش اعتمادية خارجية، مفيش حاجة تظبطها. الواجهة كلها HTML/CSS/JS مكتوبة يدويًا — مفيش framework، مفيش bundler، مفيش خطوة بناء بين تعديل ملف وتحديث الصفحة.
 
-## Safety by design
+## الأمان في التصميم
 
-Clubhouse silently rate-limits reactions and messages if you send them too fast — I found this out the hard way, more than once. Every bulk action shares a persistent, per-account rate limiter (`lib/featureLimiter.js`) that backs off automatically on a real rejection instead of hammering it further, and every destructive action (kick, end room, delete message) goes through an explicit confirmation dialog naming exactly what it will do before it does it.
+Clubhouse بيوقف الرياكتس والرسائل مؤقتًا لو اتبعتت بسرعة كبيرة — عرفت ده بالتجربة الصعبة أكتر من مرة. كل أكشن جماعي بيشارك حد سرعة إرسال دائم لكل حساب (`lib/featureLimiter.js`) بيوقف نفسه تلقائيًا لو حصل رفض حقيقي بدل ما يكمل يضرب، وأي أكشن لا رجعة فيه (طرد، إنهاء الغرفة، حذف رسالة) بيعدي على تأكيد صريح يوضح بالظبط اللي هيحصل قبل ما يحصل.
 
-## FAQ
+## أسئلة شائعة
 
-**Will Clubhouse ban my account for using this?**
-It talks to the same private API Clubdeck itself uses, at deliberately human-paced rates — the built-in rate limiter exists specifically because I hit that wall myself and don't want you to. That said, it's still an unofficial client, same as Clubdeck: use it the way you'd use any moderation tool, not to spam or abuse the platform.
+**Clubhouse هيقفل حسابي لو استخدمت البرنامج ده؟**
+البرنامج بيكلم نفس الـAPI الخاص اللي (Clubdeck) نفسه بيستخدمه، بسرعة قريبة من سرعة إنسان عادي عمدًا — حد السرعة المدمج موجود بالظبط لأني أنا نفسي ضربت الحد ده قبل كده ومش عايزك تكرر نفس الغلطة. مع ده، البرنامج زي (Clubdeck) بالظبط — أداة غير رسمية: استخدمه زي ما تستخدم أي أداة موديريشن، مش عشان سبام أو إساءة للمنصة.
 
-**Do I need Clubdeck installed to use this?**
-No. Clubdeck is one of three sign-in options, not a requirement — token or phone sign-in work with zero Clubdeck involvement.
+**لازم يكون (Clubdeck) مثبت عندي عشان أستخدم البرنامج؟**
+لأ. (Clubdeck) واحدة من 3 طرق لتسجيل الدخول بس، مش شرط — التسجيل بالتوكين أو بالهاتف بيشتغلوا من غير أي احتياج لـ(Clubdeck) خالص.
 
-**Does it work on Mac or Linux?**
-The server itself is plain Node.js and runs anywhere. The *Clubdeck companion* auto-detection path is Windows-specific (it reads Clubdeck's own Windows install path); token and phone sign-in work on any OS.
+**بيشتغل على Mac أو Linux؟**
+السيرفر نفسه Node.js عادي وبيشتغل في أي مكان. طريقة "الاكتشاف التلقائي" لجلسة (Clubdeck) تحديدًا خاصة بويندوز (بتقرا مسار تثبيت (Clubdeck) على ويندوز نفسه)؛ تسجيل الدخول بالتوكين أو بالهاتف شغالين على أي نظام تشغيل.
 
-**Is any of my data sent anywhere?**
-No. There's no backend server of mine, no analytics, no telemetry. Everything — your session, your settings, your archive — stays in a local `data/` folder on your own machine.
+**بياناتي بتتبعت لأي مكان؟**
+لأ. مفيش سيرفر خارجي بتاعي، مفيش تحليلات، مفيش تتبّع. كل حاجة — جلستك، إعداداتك، أرشيفك — فاضلة في فولدر `data/` محلي على جهازك انت بس.
 
-**Can I run this next to Clubdeck at the same time?**
-Yes — that's exactly what companion mode is for.
+**أقدر أشغّله جنب (Clubdeck) في نفس الوقت؟**
+أيوه — ده بالظبط اللي وضع "المساعد" اتعمل عشانه.
 
-## Known limits
+## حدود معروفة
 
-A few Clubhouse endpoints are documented as broken, unconfirmed, or deliberately unsupported — see the "status" column in [`CLUBHOUSE_API_ENDPOINTS.md`](docs/CLUBHOUSE_API_ENDPOINTS.md) for the full, honest list rather than a marketing one. The short version: email/password sign-in isn't possible (Clubhouse has no such API), and a couple of legacy endpoints Clubhouse itself has retired are kept in the registry only as a record of what *used* to work.
+فيه كذا إندبوينت من Clubhouse موثّق إنه معطل أو غير مؤكد أو ممنوع عمدًا — شوف عمود "الحالة" في [`CLUBHOUSE_API_ENDPOINTS.md`](docs/CLUBHOUSE_API_ENDPOINTS.md) للقايمة الكاملة الصريحة بدل الدعاية. باختصار: تسجيل دخول بالبريد والباسورد مش ممكن (Clubhouse مفيهوش API بيدعم ده)، وفيه إندبوينتس قديمة Clubhouse نفسه ألغاها لسه متسجلة في السجل بس كأثر لما كان شغال قبل كده.
 
-## License & fair use
+## الترخيص والاستخدام العادل
 
-Free to use, study, modify, and redistribute under **MIT plus a short attribution addendum** — see [`LICENSE.md`](LICENSE.md) for the exact terms. In plain language: use it however helps you, including to moderate rooms commercially, just don't strip the credit.
+البرنامج مجاني بالكامل للاستخدام والدراسة والتعديل وإعادة التوزيع تحت **MIT مع إضافة بسيطة للإسناد** — التفاصيل الكاملة في [`LICENSE.md`](LICENSE.md). ببساطة: استخدمه في أي حاجة تفيدك، حتى لو تجاري، بس متمسحش الكريديت.
 
-Specifically — **please don't remove or edit the credit footer** ("Designed & Developed by Ahmed Darhous" and its links) in any copy or fork of this app. It costs you nothing to leave it, and it's the one thing I'm asking for in exchange for giving this away for free.
+تحديدًا — **رجاءً متمسحش أو تعدّلش فوتر الكريديت** ("Designed & Developed by Ahmed Darhous" وروابطه) في أي نسخة أو fork من البرنامج. مش هيكلفك حاجة تسيبه زي ما هو، وده الحاجة الوحيدة اللي طالبها في مقابل إني باديك البرنامج ده مجانًا.
 
 ---
 
