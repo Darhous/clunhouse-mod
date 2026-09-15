@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 220" role="img" aria-label="Clubhouse mod by Darhous">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="960" y2="220" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0B1220"/>
+      <stop offset="1" stop-color="#0F1B2E"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6366F1"/>
+      <stop offset="1" stop-color="#22D3EE"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="960" height="220" rx="24" fill="url(#bg)"/>
+
+  <g transform="translate(100,110)">
+    <circle r="62" fill="none" stroke="url(#ring)" stroke-width="4"/>
+    <g stroke="#22D3EE" stroke-width="7" stroke-linecap="round">
+      <line x1="-30" y1="-14" x2="-30" y2="14"/>
+      <line x1="-10" y1="-28" x2="-10" y2="28"/>
+      <line x1="10" y1="-38" x2="10" y2="38"/>
+      <line x1="30" y1="-20" x2="30" y2="20"/>
+    </g>
+  </g>
+
+  <g font-family="'Segoe UI', 'Cairo', Arial, sans-serif" fill="#F5F7FA">
+    <text x="210" y="108" font-size="46" font-weight="700">Clubhouse mod by Darhous</text>
+    <text x="210" y="146" font-size="19" fill="#9AA3B2">Free, self-hosted moderator control surface for Clubhouse rooms</text>
+  </g>
+</svg>
