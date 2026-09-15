@@ -1,0 +1,7 @@
+# All runtime data (settings, lists, audit log, archives, secrets, chat receipts,
+# request-rate state) is generated locally on first run — see lib/state.js.
+# None of it ships in the repo; it is personal to whoever runs the app.
+data/
+node_modules/
+*.log
+.env

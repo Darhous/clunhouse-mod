@@ -1,0 +1,1748 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#071117" />
+<meta name="description" content="Clubhouse mod by Darhous — سطح تحكم عربي لإدارة ومراقبة الغرف المباشرة." />
+<title>Clubhouse mod by Darhous</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<script src="/modules/themes.js?v=2"></script>
+<link rel="stylesheet" href="/style.css" />
+<link rel="stylesheet" href="/broadcast.css?v=17" />
+<link rel="stylesheet" href="/room-chat.css?v=1" />
+</head>
+<body>
+  <!--
+    THESIS: Clubhouse mod by Darhous is a live broadcast control surface, not a generic dashboard; state, role, and the next valid action lead every screen.
+    OWN-WORLD: Deep blue-black equipment panels, crisp cyan signal lines, restrained green/amber/red state lamps, squared controls, and one unified outline SVG language.
+    STORY: The operator selects a room, starts read-only monitoring, understands their effective role, then deliberately joins or moderates through permission-aware controls.
+    FIRST VIEWPORT: A fixed operations rail, a two-level status bar, and a full-width live-room console with monitoring state, room telemetry, and one primary participation action.
+    FORM: User-approved Broadcast Control Surface; first-ranked operational form; seed key broadcast-control-surface-approved-20260815.
+    FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
+  -->
+  <a class="skip-link" href="#mainContent">انتقل إلى مساحة العمل</a>
+  <div class="a11y-live visually-hidden" id="a11yLive" role="status" aria-live="polite" aria-atomic="true"></div>
+  <div class="ambient" aria-hidden="true"><span></span><span></span><span></span></div>
+  <div class="sidebar-scrim" id="sidebarScrim" hidden></div>
+  <div class="shell">
+
+    <aside class="sidebar" id="sidebar" aria-label="التنقل بين مساحات العمل">
+      <div class="brand">
+        <span class="brand-glyph" aria-hidden="true"><svg><use href="/icons.svg#i-logo"></use></svg></span>
+        <span class="brand-lockup"><span class="brand-text">Clubhouse mod by Darhous</span><small>غرفة عمليات البث</small></span>
+        <button class="sidebar-collapse-btn icon-control" id="sidebarCollapseBtn" type="button" aria-label="طي شريط التنقل" aria-expanded="true">
+          <svg aria-hidden="true"><use href="/icons.svg#i-menu"></use></svg>
+        </button>
+        <button class="sidebar-mobile-close icon-control" id="sidebarMobileClose" type="button" aria-label="إغلاق قائمة مساحات العمل">
+          <svg aria-hidden="true"><use href="/icons.svg#i-close"></use></svg>
+        </button>
+      </div>
+
+      <nav class="side-nav" id="tabs" aria-label="مساحات العمل">
+        <div class="nav-group-label">العمليات الحية</div>
+        <button class="nav-item nav-item--priority current-room-nav" type="button" data-tab="currentroom" title="الغرفة الحالية">
+          <span class="nav-icon" aria-hidden="true"><svg><use href="/icons.svg#i-logo"></use></svg></span><span>الغرفة الحالية</span><span class="nav-live-indicator" id="currentRoomNavIndicator" aria-hidden="true"></span>
+        </button>
+        <button class="nav-item nav-item--priority" type="button" data-tab="quick" title="التحكم السريع">
+          <span class="nav-icon" aria-hidden="true"><svg><use href="/icons.svg#i-control"></use></svg></span><span>التحكم السريع</span>
+        </button>
+        <button class="nav-item nav-item--priority nav-item--effects" type="button" data-tab="effects" title="تأثيرات">
+          <span class="nav-icon" aria-hidden="true"><svg><use href="/icons.svg#i-reaction"></use></svg></span><span>تأثيرات</span>
+        </button>
+        <button class="nav-item nav-item--priority" type="button" data-tab="roomchat" title="شات الروم">
+          <span class="nav-icon" aria-hidden="true"><svg><use href="/icons.svg#i-message"></use></svg></span><span>شات الروم</span>
+        </button>
+        <button class="nav-item nav-item--priority" type="button" data-tab="queue" title="طابور التحدث">
+          <span class="nav-icon" aria-hidden="true"><svg><use href="/icons.svg#i-queue"></use></svg></span><span>طابور التحدث</span><span class="nav-badge" id="queueBadge" hidden>0</span>
+        </button>
+        <button class="nav-item nav-item--priority" type="button" data-tab="members" title="المسرح والجمهور">
+          <span class="nav-icon" aria-hidden="true"><svg><use href="/icons.svg#i-users"></use></svg></span><span>المسرح والجمهور</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="search" title="البحث داخل الغرفة">
+          <span class="nav-icon" aria-hidden="true"><svg><use href="/icons.svg#i-search"></use></svg></span><span>البحث داخل الغرفة</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="advanced" title="الأوامر المتقدمة">
+          <span class="nav-icon" aria-hidden="true"><svg><use href="/icons.svg#i-shield"></use></svg></span><span>الأوامر المتقدمة</span><span class="nav-badge" id="advancedBadge" hidden>0</span>
+        </button>
+
+        <div class="nav-group-label">الاكتشاف والتواصل</div>
+        <button class="nav-item active" type="button" data-tab="hallway" title="الغرف المباشرة">
+          <span class="nav-icon" aria-hidden="true"><svg><use href="/icons.svg#i-dashboard"></use></svg></span><span>الغرف المباشرة</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="houses" title="الهاوسات">
+          <span class="nav-icon" aria-hidden="true"><svg><use href="/icons.svg#i-house"></use></svg></span><span>الهاوسات</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="messages" title="الرسائل">
+          <span class="nav-icon" aria-hidden="true"><svg><use href="/icons.svg#i-message"></use></svg></span><span>الرسائل</span><span class="nav-badge" id="messagesBadge" hidden>0</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="social" title="الشبكة الاجتماعية">
+          <span class="nav-icon" aria-hidden="true"><svg><use href="/icons.svg#i-social"></use></svg></span><span>الشبكة الاجتماعية</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="friends" title="الأصدقاء والإشعارات">
+          <span class="nav-icon" aria-hidden="true"><svg><use href="/icons.svg#i-bell"></use></svg></span><span>الأصدقاء والإشعارات</span><span class="nav-badge" id="friendsTabBadge" hidden>0</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="profile" title="الملف الشخصي">
+          <span class="nav-icon" aria-hidden="true"><svg><use href="/icons.svg#i-profile"></use></svg></span><span>الملف الشخصي</span>
+        </button>
+
+        <div class="nav-group-label">النظام والتحليل</div>
+        <button class="nav-item" type="button" data-tab="platform" title="مركز المنصة">
+          <span class="nav-icon" aria-hidden="true"><svg><use href="/icons.svg#i-control"></use></svg></span><span>مركز المنصة</span><span class="nav-badge" id="platformRunningBadge" hidden>0</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="settings" title="الإعدادات والأتمتة">
+          <span class="nav-icon" aria-hidden="true"><svg><use href="/icons.svg#i-settings"></use></svg></span><span>الإعدادات والأتمتة</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="accounts" title="إدارة الحسابات">
+          <span class="nav-icon" aria-hidden="true"><svg><use href="/icons.svg#i-profile"></use></svg></span><span>إدارة الحسابات</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="stats" title="الإحصاءات">
+          <span class="nav-icon" aria-hidden="true"><svg><use href="/icons.svg#i-chart"></use></svg></span><span>الإحصاءات</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="archive" title="الأرشيف">
+          <span class="nav-icon" aria-hidden="true"><svg><use href="/icons.svg#i-archive"></use></svg></span><span>الأرشيف</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="log" title="سجل العمليات">
+          <span class="nav-icon" aria-hidden="true"><svg><use href="/icons.svg#i-log"></use></svg></span><span>سجل العمليات</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-foot">
+        <button class="account" id="account" type="button" aria-label="تبديل حساب Clubhouse">
+          <span class="live-dot" id="connDot" aria-hidden="true"></span>
+          <span class="account-text">
+            <span id="accountName">جاري التحقق…</span>
+            <span class="account-sub" id="roomName">لا توجد غرفة تحت المراقبة</span>
+          </span>
+          <svg class="account-more" aria-hidden="true"><use href="/icons.svg#i-more"></use></svg>
+        </button>
+      </div>
+    </aside>
+
+    <div class="main-col">
+      <header class="topbar">
+        <div class="mobile-brand-row">
+          <button class="icon-control" id="mobileMenuBtn" type="button" aria-label="فتح مساحات العمل" aria-controls="sidebar" aria-expanded="false">
+            <svg aria-hidden="true"><use href="/icons.svg#i-menu"></use></svg>
+          </button>
+          <span class="mobile-brand"><svg aria-hidden="true"><use href="/icons.svg#i-logo"></use></svg> Clubhouse mod by Darhous</span>
+        </div>
+        <div class="workspace-status">
+          <div class="breadcrumb">
+            <span class="conn-quality" id="connQuality" aria-label="جودة الاتصال"><i></i><i></i><i></i><i></i></span>
+            <span>
+              <small>مساحة العمل الحالية</small>
+              <b id="breadcrumbText">الغرف المباشرة</b>
+            </span>
+            <span class="pill latency-badge ltr-num" id="latencyBadge" hidden>—ms</span>
+            <span class="pill pill--warn" id="focusModeBadge" hidden>وضع التركيز</span>
+          </div>
+          <label class="theme-control" for="themeSelect">
+            <span>الهوية</span>
+            <select id="themeSelect" aria-label="اختيار هوية Clubhouse mod by Darhous">
+              <option value="current">التحكم الإذاعي الحالي</option>
+              <option value="blood">العمليات الدموية</option>
+              <option value="matrix">مطر الإشارة</option>
+              <option value="hud">قيادة AI التكتيكية</option>
+              <option value="opsdeck">قمرة العمليات</option>
+              <option value="signalhud">غرفة الإشارة</option>
+              <option value="onair">استوديو البث</option>
+            </select>
+          </label>
+          <button class="icon-control command-button" id="paletteOpenBtn" type="button" aria-label="فتح لوحة الأوامر" title="Ctrl+K">
+            <svg aria-hidden="true"><use href="/icons.svg#i-command"></use></svg><span class="ltr-num">Ctrl K</span>
+          </button>
+        </div>
+        <form class="room-picker" id="roomMonitorForm" aria-label="الانضمام إلى غرفة مباشرة أو مغادرتها">
+          <label class="field-shell">
+            <span class="visually-hidden">اختر غرفة مباشرة</span>
+            <select id="channelSelect"><option value="">اختر غرفة مباشرة…</option></select>
+          </label>
+          <span class="picker-separator" aria-hidden="true">أو</span>
+          <label class="field-shell field-shell--channel">
+            <span class="visually-hidden">رابط الغرفة أو رمزها</span>
+            <input id="channelInput" type="text" placeholder="رابط الغرفة أو رمزها" class="ltr-input" autocomplete="off" spellcheck="false" />
+          </label>
+          <button id="connectBtn" class="btn btn--accent monitor-button" type="button">
+            <svg aria-hidden="true"><use href="/icons.svg#i-join"></use></svg><span>انضمام</span>
+          </button>
+          <button id="disconnectBtn" class="btn btn--ghost room-leave-button" type="button" hidden>
+            <svg aria-hidden="true"><use href="/icons.svg#i-stop"></use></svg><span>مغادرة</span>
+          </button>
+        </form>
+      </header>
+
+      <main class="content" id="mainContent" tabindex="-1">
+
+        <section class="panel current-room-workspace" id="tab-currentroom" aria-labelledby="currentRoomWorkspaceTitle">
+          <header class="workspace-heading current-room-heading">
+            <div class="workspace-title-block"><span class="workspace-heading-icon" aria-hidden="true"><svg><use href="/icons.svg#i-logo"></use></svg></span><div><h2 id="currentRoomWorkspaceTitle">الغرفة الحالية</h2><span>مشاركة الحساب، إدارة المسرح، متابعة الطابور، والتحكم في كل الحضور من مكان واحد.</span></div></div>
+            <div class="current-room-presence" id="currentRoomPresence" data-presence="offline">
+              <span class="status-lamp" aria-hidden="true"></span>
+              <span><b id="currentRoomPresenceLabel">لا توجد غرفة متصلة</b><small id="currentRoomCapabilitySummary">اختر غرفة من الأعلى لبدء المراقبة.</small></span>
+              <span class="pill" id="currentRoomRoleBadge">غير متصل</span>
+            </div>
+          </header>
+
+          <section class="live-room-stage" id="liveRoomStage" data-room-state="idle" aria-labelledby="liveRoomTitle">
+          <div class="signal-field" aria-hidden="true">
+            <span class="signal-sweep"></span>
+            <span class="signal-node signal-node--a"></span>
+            <span class="signal-node signal-node--b"></span>
+            <span class="signal-node signal-node--c"></span>
+          </div>
+          <div class="live-room-copy">
+            <div class="stage-eyebrow">
+              <span class="stage-live-dot" aria-hidden="true"></span>
+              <span id="liveRoomEyebrow">قناة المراقبة</span>
+              <span class="stage-role" id="liveRoleLabel">غير متصل</span>
+            </div>
+            <h1 id="liveRoomTitle">اختر غرفة لبدء المراقبة</h1>
+            <p id="liveRoomSummary">المراقبة تقرأ حالة الغرفة فقط. الانضمام الحقيقي إجراء منفصل سيظهر هنا بعد نجاح الاتصال.</p>
+            <div class="monitoring-explainer" id="monitoringExplainer">
+              <span class="status-lamp" aria-hidden="true"></span>
+              <span><b>وضع المراقبة</b><small>لا يدخل حسابك إلى الغرفة ولا يغيّر موضعه.</small></span>
+            </div>
+          </div>
+          <div class="stage-metrics" aria-label="قياسات الغرفة الحالية">
+            <span><small>إجمالي الحضور</small><b id="liveAllCount" class="ltr-num">0</b></span>
+            <span><small>على المسرح</small><b id="liveSpeakerCount" class="ltr-num">0</b></span>
+            <span><small>في الطابور</small><b id="liveQueueCount" class="ltr-num">0</b></span>
+            <span><small>المشرفون</small><b id="liveModCount" class="ltr-num">0</b></span>
+          </div>
+          <div class="room-command-rail" id="roomCommandRail" aria-label="أوامر المشاركة الشخصية">
+            <div class="command-rail-label"><span>تحكم حسابك</span><small>الأوامر تُنفّذ فورًا على Clubhouse</small></div>
+            <button class="stage-command stage-command--primary" id="joinRoomBtn" type="button" hidden>
+              <span class="stage-command-icon" aria-hidden="true"><svg><use href="/icons.svg#i-join"></use></svg></span><span><b>الانضمام إلى الغرفة</b><small>إدخال الحساب فعليًا كمستمع</small></span>
+            </button>
+            <button class="stage-command stage-command--live" id="acceptSpeakerInviteBtn" type="button" hidden>
+              <span class="stage-command-icon" aria-hidden="true"><svg><use href="/icons.svg#i-mic"></use></svg></span><span><b>قبول دعوة التحدث</b><small>الانتقال من الجمهور إلى المسرح</small></span>
+            </button>
+            <button class="stage-command" id="raiseHandBtn" type="button" hidden>
+              <span class="stage-command-icon" aria-hidden="true"><svg><use href="/icons.svg#i-hand"></use></svg></span><span><b id="raiseHandLabel">طلب التحدث</b><small id="raiseHandHint">إرسال طلب انتقال إلى المسرح</small></span>
+            </button>
+            <button class="stage-command" id="moveToAudienceBtn" type="button" hidden>
+              <span class="stage-command-icon" aria-hidden="true"><svg><use href="/icons.svg#i-audience"></use></svg></span><span><b>الانتقال إلى الجمهور</b><small>مغادرة المسرح مع البقاء في الغرفة</small></span>
+            </button>
+            <button class="stage-command stage-command--crown" id="promoteAllBtn" type="button" hidden>
+              <span class="stage-command-icon" aria-hidden="true"><svg><use href="/icons.svg#i-crown"></use></svg></span><span><b>ترقية المتحدثين إلى مشرفين</b><small>يشمل كل متحدث غير مشرف</small></span>
+            </button>
+            <button class="stage-command stage-command--leave" id="leaveCurrentRoomBtn" type="button" hidden>
+              <span class="stage-command-icon" aria-hidden="true"><svg><use href="/icons.svg#i-join"></use></svg></span><span><b>مغادرة الغرفة</b><small>إخراج حسابك فعليًا وإنهاء جلسة الغرفة</small></span>
+            </button>
+          </div>
+          <div class="stage-connection" id="stageConnectionState" role="status" aria-live="polite"><span aria-hidden="true"></span> في انتظار اختيار غرفة</div>
+          </section>
+
+          <section class="current-room-control-deck" aria-labelledby="currentRoomControlTitle">
+            <div class="current-room-control-copy">
+              <span class="control-deck-signal" aria-hidden="true"><svg><use href="/icons.svg#i-control"></use></svg></span>
+              <span><h3 id="currentRoomControlTitle">كونسول التحكم المباشر</h3><p id="currentRoomControlHint">ابدأ المراقبة ثم انضم إلى الغرفة لتفعيل الأوامر المتاحة لدورك.</p></span>
+            </div>
+            <div class="current-room-control-grid" aria-label="أوامر الغرفة الحالية">
+              <button class="room-control-key" id="currentMuteAllBtn" type="button" data-forward-control="muteAllBtn"><svg aria-hidden="true"><use href="/icons.svg#i-mute"></use></svg><span><b>كتم المسرح</b><small>كل المتحدثين</small></span></button>
+              <button class="room-control-key" id="currentInviteAllBtn" type="button" data-forward-control="inviteAllBtn"><svg aria-hidden="true"><use href="/icons.svg#i-mic"></use></svg><span><b>دعوة الطابور</b><small>رفع كل الطلبات</small></span></button>
+              <button class="room-control-key" id="currentLowerAllBtn" type="button" data-forward-control="lowerAllBtn"><svg aria-hidden="true"><use href="/icons.svg#i-down"></use></svg><span><b>إخلاء المسرح</b><small>إنزال المتحدثين</small></span></button>
+              <button class="room-control-key" id="currentReactAllBtn" type="button" data-forward-control="reactAllBtn"><svg aria-hidden="true"><use href="/icons.svg#i-reaction"></use></svg><span><b>رياكت جماعي</b><small>لكل الحاضرين</small></span></button>
+              <button class="room-control-key room-control-key--danger" id="currentEndRoomBtn" type="button" data-forward-control="endRoomBtn"><svg aria-hidden="true"><use href="/icons.svg#i-alert"></use></svg><span><b>إنهاء الغرفة</b><small>للمودريتور فقط</small></span></button>
+            </div>
+          </section>
+
+          <section class="current-room-queue" aria-labelledby="currentRoomQueueTitle">
+            <div class="current-room-section-head">
+              <span><h3 id="currentRoomQueueTitle">طلبات الصعود للمايك</h3><p>الأعضاء المنتظرون موافقة أحد المشرفين.</p></span>
+              <span class="pill pill--warn" id="currentRoomQueueCount">0</span>
+            </div>
+            <div id="currentRoomQueueList" class="current-room-queue-list"></div>
+            <p class="empty-hint" id="currentRoomQueueEmpty">لا توجد طلبات تحدث الآن.</p>
+          </section>
+
+          <section class="current-room-people" aria-labelledby="currentRoomPeopleTitle">
+            <div class="current-room-section-head">
+              <span><h3 id="currentRoomPeopleTitle">كل الموجودين في الغرفة</h3><p>إجراءات كل عضو تظهر حسب صلاحيات حسابك الفعلية.</p></span>
+              <button class="btn btn--ghost btn--sm" type="button" data-open-workspace="members">فتح أدوات الأعضاء المتقدمة</button>
+            </div>
+            <div class="current-room-people-layout">
+              <section class="current-room-zone current-room-zone--stage" aria-labelledby="currentRoomStageTitle">
+                <header><span class="zone-marker zone-marker--stage" aria-hidden="true"><svg><use href="/icons.svg#i-mic"></use></svg></span><span><b id="currentRoomStageTitle">المتحدثون</b><small>المشرفون وأصحاب المايك</small></span><span class="pill" id="currentRoomSpeakersCount">0</span></header>
+                <div id="currentRoomSpeakersList" class="user-list current-room-member-grid"></div>
+                <p class="empty-hint" id="currentRoomSpeakersEmpty">المسرح فارغ.</p>
+              </section>
+              <section class="current-room-zone current-room-zone--audience" aria-labelledby="currentRoomAudienceTitle">
+                <header><span class="zone-marker zone-marker--audience" aria-hidden="true"><svg><use href="/icons.svg#i-audience"></use></svg></span><span><b id="currentRoomAudienceTitle">الجمهور</b><small>كل المستمعين</small></span><span class="pill" id="currentRoomListenersCount">0</span></header>
+                <div id="currentRoomListenersList" class="user-list current-room-member-grid"></div>
+                <p class="empty-hint" id="currentRoomListenersEmpty">لا يوجد مستمعون.</p>
+              </section>
+            </div>
+          </section>
+        </section>
+
+        <section class="panel active" id="tab-hallway">
+          <header class="workspace-heading">
+            <div class="workspace-title-block"><span class="workspace-heading-icon" aria-hidden="true"><svg><use href="/icons.svg#i-dashboard"></use></svg></span><div><h2>الغرف المباشرة</h2><span>اكتشف الغرف النشطة، ادخل بحسابك، أو راقبها بدون مشاركة.</span></div></div>
+            <div class="workspace-heading-actions">
+              <button class="btn btn--ghost btn--sm" id="refreshHallwayBtn"><svg aria-hidden="true"><use href="/icons.svg#i-refresh"></use></svg>تحديث الغرف</button>
+              <button class="btn btn--ghost btn--sm" id="hallwayViewToggle"><svg aria-hidden="true"><use href="/icons.svg#i-menu"></use></svg>عرض قائمة</button>
+            </div>
+          </header>
+          <div class="card" id="hallwayOnlineCard">
+            <div class="card-head"><h3><svg aria-hidden="true"><use href="/icons.svg#i-users"></use></svg>أونلاين دلوقتي من متابعينك</h3><span class="pill" id="hallwayOnlineCount">0</span></div>
+            <div id="hallwayOnlineStrip" class="preset-row"></div>
+            <p class="empty-hint" id="hallwayOnlineEmpty">مفيش حد من متابعينك في غرفة مفتوحة دلوقتي.</p>
+          </div>
+          <div id="recentRoomsWrap" hidden>
+            <div class="card-head" style="margin-bottom:10px"><h3>غرف زرتها قبل كده</h3></div>
+            <div id="recentRoomsRow" class="preset-row" style="margin-bottom:18px"></div>
+          </div>
+          <div class="card-head" style="margin-bottom:10px">
+            <h3>متاحة الآن <span class="pill" id="hallwayCount">0</span></h3>
+          </div>
+          <div class="inline-form" style="margin-bottom:8px">
+            <input type="text" id="hallwayFilterInput" placeholder="بحث بالاسم أو الموضوع…" style="flex:1" />
+            <select id="hallwaySortSelect">
+              <option value="default">ترتيب افتراضي</option>
+              <option value="popular">الأكبر حضور</option>
+              <option value="speakers">الأكتر متكلمين</option>
+            </select>
+            <label class="chip-toggle"><input type="checkbox" id="hallwayHousesOnlyToggle" /> غرف هاوساتي بس</label>
+            <label class="chip-toggle"><input type="checkbox" id="hallwayFriendsOnlyToggle" /> فيها أصدقاء بس</label>
+          </div>
+          <p class="hint" style="margin:0 0 10px">آخر تحديث: <span id="hallwayLastUpdate" class="ltr-num">—</span> · تحديث تلقائي كل <select id="hallwayRefreshRate" style="display:inline-block;width:auto"><option value="15000">15 ث</option><option value="30000" selected>30 ث</option><option value="60000">دقيقة</option><option value="0">إيقاف</option></select></p>
+          <div id="hallwayGrid" class="hallway-grid"></div>
+          <p class="empty-hint" id="hallwayEmpty">بنجيب الغرف المباشرة…</p>
+          <div class="card">
+            <div class="card-head"><h3>تنبيه لكلمات في عنوان الغرفة</h3></div>
+            <form class="inline-form" id="watchKeywordForm">
+              <input type="text" id="watchKeywordInput" placeholder="كلمة في الموضوع (مثلاً: مقابلة)" class="ltr-input" style="flex:1" />
+              <button class="btn btn--accent btn--sm">إضافة</button>
+            </form>
+            <ul class="chip-list" id="watchKeywordList"></ul>
+          </div>
+        </section>
+
+        <section class="panel" id="tab-messages">
+          <header class="workspace-heading">
+            <div class="workspace-title-block"><span class="workspace-heading-icon" aria-hidden="true"><svg><use href="/icons.svg#i-message"></use></svg></span><div><h2>الرسائل</h2><span>اقرأ المحادثات والطلبات من مساحة واحدة واضحة.</span></div></div>
+          </header>
+          <div id="chatsListView">
+            <div class="card-head" style="margin-bottom:14px">
+              <h3>المحادثات</h3>
+              <div class="chat-loc-toggle">
+                <button class="btn btn--ghost btn--sm active" data-loc="chats">الوارد</button>
+                <button class="btn btn--ghost btn--sm" data-loc="requests">الطلبات</button>
+              </div>
+              <button class="btn btn--accent btn--sm" id="acceptAllRequestsBtn" hidden><svg aria-hidden="true"><use href="/icons.svg#i-check"></use></svg>قبول كل الطلبات</button>
+            </div>
+            <input type="text" id="chatFilterInput" placeholder="فلترة بالاسم…" style="margin-bottom:10px;width:100%" />
+            <div id="chatsList" class="user-list"></div>
+            <p class="empty-hint" id="chatsEmpty">بنجيب الرسائل…</p>
+          </div>
+          <div id="chatThreadView" hidden>
+            <div class="card-head" style="margin-bottom:10px">
+              <button class="btn btn--ghost btn--sm" id="backToChatsBtn"><svg aria-hidden="true"><use href="/icons.svg#i-down"></use></svg>رجوع</button>
+              <h3 id="chatThreadTitle"></h3>
+              <button class="btn btn--ghost btn--sm" id="pinChatBtn"><svg aria-hidden="true"><use href="/icons.svg#i-lock"></use></svg>تثبيت</button>
+              <button class="btn btn--ghost btn--sm" id="exportChatBtn"><svg aria-hidden="true"><use href="/icons.svg#i-download"></use></svg>تصدير</button>
+              <button class="btn btn--ghost btn--sm" id="deleteChatBtn" style="color:var(--danger)"><svg aria-hidden="true"><use href="/icons.svg#i-trash"></use></svg>حذف</button>
+            </div>
+            <input type="text" id="chatSearchInput" placeholder="بحث داخل الرسائل دي…" style="margin-bottom:8px;width:100%" />
+            <div id="chatMessages" class="chat-messages"></div>
+            <form class="inline-form" id="chatSendForm">
+              <input type="text" id="chatSendInput" placeholder="اكتب رسالة…" class="ltr-input" />
+              <button class="btn btn--accent btn--sm">إرسال</button>
+            </form>
+            <p class="hint" style="color:var(--danger)">الإرسال غير متاح حاليًا — قراءة الرسائل فقط هي الوظيفة المؤكدة لأن عقد الإرسال لم يُثبت بعد.</p>
+          </div>
+        </section>
+
+        <section class="panel" id="tab-houses">
+          <header class="workspace-heading">
+            <div class="workspace-title-block"><span class="workspace-heading-icon" aria-hidden="true"><svg><use href="/icons.svg#i-house"></use></svg></span><div><h2>الهاوسات</h2><span>تابع مجتمعاتك، أعضائها، والريبلايز المرتبطة بها.</span></div></div>
+            <div class="workspace-heading-actions"><button class="btn btn--accent btn--sm" id="createHouseBtn"><svg aria-hidden="true"><use href="/icons.svg#i-join"></use></svg>هاوس جديد</button></div>
+          </header>
+          <div class="card-head" style="margin-bottom:10px">
+            <h3>الهاوسات الخاصة بك</h3>
+          </div>
+          <div class="inline-form" style="margin-bottom:10px">
+            <input type="text" id="housesFilterInput" placeholder="فلترة بالاسم…" style="flex:1" />
+            <select id="housesSortSelect">
+              <option value="default">ترتيب افتراضي</option>
+              <option value="members">الأكتر أعضاء</option>
+            </select>
+          </div>
+          <div id="housesGrid" class="hallway-grid"></div>
+          <p class="empty-hint" id="housesEmpty">بنجيب الهاوسات…</p>
+          <div class="card" id="houseDetailPanel" hidden>
+            <div class="card-head">
+              <h3 id="houseDetailName"></h3>
+              <div style="display:flex;gap:8px;align-items:center">
+                <div class="chat-loc-toggle">
+                  <button class="btn btn--ghost btn--sm active" data-hview="members">الأعضاء</button>
+                  <button class="btn btn--ghost btn--sm" data-hview="replays">الريبلايز</button>
+                  <button class="btn btn--ghost btn--sm" data-hview="desc">الوصف</button>
+                </div>
+                <button class="btn btn--ghost btn--sm" id="exportHouseMembersBtn"><svg aria-hidden="true"><use href="/icons.svg#i-download"></use></svg>CSV</button>
+                <button class="btn btn--ghost btn--sm" id="leaveHouseBtn" style="color:var(--danger)">مغادرة</button>
+                <button class="btn btn--ghost btn--sm" id="closeHouseDetail" aria-label="إغلاق تفاصيل الهاوس"><svg aria-hidden="true"><use href="/icons.svg#i-close"></use></svg></button>
+              </div>
+            </div>
+            <div id="houseMembersView">
+              <div class="inline-form">
+                <input type="text" id="houseMemberFilter" placeholder="فلترة أعضاء الهاوس بالاسم…" style="flex:1" />
+                <button class="share-btn" id="shareHouseBtn"><svg aria-hidden="true"><use href="/icons.svg#i-link"></use></svg>نسخ رابط الهاوس</button>
+              </div>
+              <div id="houseAdminsSection" hidden>
+                <h4 style="font-size:.8rem;color:var(--fg-muted);margin:10px 0 6px">الأدمنز</h4>
+                <div id="houseAdminsList" class="user-list"></div>
+              </div>
+              <h4 style="font-size:.8rem;color:var(--fg-muted);margin:10px 0 6px">كل الأعضاء</h4>
+              <div id="houseMembersList" class="user-list"></div>
+              <p class="empty-hint" id="houseMembersEmpty"></p>
+            </div>
+            <div id="houseReplaysView" hidden>
+              <div id="houseReplaysList" class="archive-list"></div>
+              <p class="empty-hint" id="houseReplaysEmpty"></p>
+            </div>
+            <div id="houseDescView" hidden>
+              <form class="inline-form" id="houseDescForm">
+                <textarea id="houseDescInput" rows="4" style="flex:1;background:var(--surface-2);color:var(--fg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 11px;font-family:var(--font-ui)"></textarea>
+              </form>
+              <button class="btn btn--accent btn--sm" id="houseDescSaveBtn">حفظ الوصف</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="tab-quick">
+          <header class="workspace-heading">
+            <div class="workspace-title-block"><span class="workspace-heading-icon" aria-hidden="true"><svg><use href="/icons.svg#i-control"></use></svg></span><div><h2>التحكم السريع</h2><span>أوامر التشغيل المتكررة مع فصل واضح للأوامر الخطرة.</span></div></div>
+            <div class="workspace-heading-state"><span class="status-lamp" aria-hidden="true"></span><b>مرتبط بحالة الغرفة الحية</b></div>
+          </header>
+          <div class="role-banner" id="roleBanner" hidden>
+            <span class="pill" id="roleBadge"></span>
+            <span id="roleExplain"></span>
+            <button class="share-btn" id="backToHallwayBtn" style="margin-inline-start:auto"><svg aria-hidden="true"><use href="/icons.svg#i-dashboard"></use></svg>الغرف المباشرة</button>
+            <button class="share-btn" id="copyRoomSummaryBtn"><svg aria-hidden="true"><use href="/icons.svg#i-copy"></use></svg>ملخص سريع</button>
+            <button class="share-btn" id="shareRoomBtn"><svg aria-hidden="true"><use href="/icons.svg#i-link"></use></svg>نسخ رابط الغرفة</button>
+          </div>
+
+          <button class="panic-btn" id="panicBtn" hidden><svg aria-hidden="true"><use href="/icons.svg#i-alert"></use></svg><span>وضع الطوارئ</span><small>كتم الكل، قفل رفع اليد، وإزالة القائمة السوداء</small></button>
+
+          <div class="quick-grid">
+            <button class="action-card" id="muteAllBtn">
+              <span class="action-icon"><svg aria-hidden="true"><use href="/icons.svg#i-mute"></use></svg></span>
+              <span class="action-title">كتم الكل</span>
+              <span class="action-sub" id="speakerCount">0 متكلم</span>
+            </button>
+            <button class="action-card" id="inviteAllBtn">
+              <span class="action-icon"><svg aria-hidden="true"><use href="/icons.svg#i-mic"></use></svg></span>
+              <span class="action-title">رفع الكل (دعوة)</span>
+              <span class="action-sub" id="queueCount">0 رافع إيد</span>
+            </button>
+            <button class="action-card action-card--danger" id="lowerAllBtn">
+              <span class="action-icon"><svg aria-hidden="true"><use href="/icons.svg#i-down"></use></svg></span>
+              <span class="action-title">إنزال الجميع</span>
+              <span class="action-sub" id="speakerCount2">0 متكلم</span>
+            </button>
+            <button class="action-card action-card--accent2" id="reactAllBtn">
+              <span class="action-icon"><svg aria-hidden="true"><use href="/icons.svg#i-reaction"></use></svg></span>
+              <span class="action-title">رياكت جماعي</span>
+              <span class="action-sub">لكل الحاضرين</span>
+            </button>
+          </div>
+
+          <div class="quick-grid quick-grid--sm">
+            <button class="action-card action-card--sm" id="reactCurrentBtn">
+              <span class="action-icon"><svg aria-hidden="true"><use href="/icons.svg#i-control"></use></svg></span>
+              <span class="action-title">رياكت للمتكلم الحالي</span>
+              <span class="action-sub">تخمين تقريبي — شرح تحت</span>
+            </button>
+            <label class="action-card action-card--sm action-card--toggle">
+              <span class="action-icon"><svg aria-hidden="true"><use href="/icons.svg#i-lock"></use></svg></span>
+              <span class="action-title">كتم تلقائي لأي سبيكر جديد</span>
+              <span class="toggle-switch"><input type="checkbox" id="autoMuteNewToggle" /><span class="toggle-track"></span></span>
+            </label>
+          </div>
+
+          <div class="settings-grid">
+          <div class="card card--primary">
+            <div class="card-head">
+              <h3>قوالب رياكت سريعة</h3>
+              <button class="btn btn--ghost btn--sm" id="managePresetsBtn">تعديل القوالب</button>
+            </div>
+            <div class="preset-row" id="presetRow"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>إدارة الغرفة</h3></div>
+            <form class="inline-form" id="roomTitleForm">
+              <input type="text" id="roomTitleInput" placeholder="عنوان جديد للغرفة" />
+              <button class="btn btn--accent btn--sm">تغيير العنوان</button>
+            </form>
+            <div class="inline-form">
+              <label class="action-card action-card--toggle" style="flex:1;padding:10px 14px">
+                <span class="action-icon">✋</span>
+                <span class="action-title">قفل رفع الإيد</span>
+                <span class="toggle-switch"><input type="checkbox" id="handraiseLockToggle" /><span class="toggle-track"></span></span>
+              </label>
+              <button class="btn" id="endRoomBtn" style="border-color:var(--danger);color:var(--danger)">إنهاء الغرفة</button>
+            </div>
+            <div class="inline-form" style="margin-top:8px">
+              <input type="number" id="quietMinutesInput" value="5" min="1" style="max-width:80px" />
+              <button class="btn btn--sm" id="quietModeBtn" style="flex:1"><svg aria-hidden="true"><use href="/icons.svg#i-clock"></use></svg>وضع هدوء مؤقت</button>
+            </div>
+            <div class="inline-form" style="margin-top:8px">
+              <label class="action-card action-card--toggle" style="flex:1;padding:10px 14px">
+                <span class="action-icon"><svg aria-hidden="true"><use href="/icons.svg#i-message"></use></svg></span>
+                <span class="action-title">الشات النصي داخل الغرفة</span>
+                <span class="toggle-switch"><input type="checkbox" id="roomMessagesToggle" /><span class="toggle-track"></span></span>
+              </label>
+            </div>
+            <form class="inline-form" id="roomLinkForm" style="margin-top:8px">
+              <input type="text" id="roomLinkInput" placeholder="رابط يتعرض في الغرفة" class="ltr-input" style="flex:1" />
+              <button class="btn btn--sm"><svg aria-hidden="true"><use href="/icons.svg#i-link"></use></svg>إضافة</button>
+              <button class="btn btn--sm" id="removeRoomLinkBtn" type="button" style="border-color:var(--danger);color:var(--danger)">حذف</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>إيموجي بجانب اسمك في الغرفة</h3><span class="pill">عقد مرشح</span></div>
+            <p class="hint" style="margin-top:0">بيظهر جنب اسمك للحاضرين في الغرفة المتصلة دلوقتي بس — لسه محتاج تأكيد حي.</p>
+            <form class="inline-form" id="channelEmojiForm">
+              <input type="text" id="channelEmojiInput" placeholder="إيموجي واحد، مثلاً 🎟" maxlength="8" style="max-width:140px" />
+              <button class="btn btn--accent btn--sm">تعيين</button>
+              <button class="btn btn--sm" id="channelEmojiClearBtn" type="button">إزالة</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>تحكم متقدم بالطابور والسبيكرز</h3></div>
+            <div class="inline-form">
+              <input type="number" id="inviteNextNInput" value="3" min="1" style="max-width:80px" />
+              <button class="btn btn--sm" id="inviteNextNBtn" style="flex:1">رفع أول N من الطابور</button>
+            </div>
+            <div class="inline-form" style="margin-top:8px">
+              <button class="btn btn--sm" id="muteNonModsBtn" style="flex:1"><svg aria-hidden="true"><use href="/icons.svg#i-mute"></use></svg>كتم المتحدثين عدا المشرفين</button>
+              <button class="btn btn--sm" id="copyAttendeesBtn" style="flex:1"><svg aria-hidden="true"><use href="/icons.svg#i-copy"></use></svg>نسخ قائمة الحاضرين</button>
+            </div>
+            <div class="inline-form" style="margin-top:8px">
+              <button class="btn btn--accent btn--sm" id="inviteAllListenersBtn" style="flex:1"><svg aria-hidden="true"><use href="/icons.svg#i-mic"></use></svg>دعوة كل المستمعين للتحدث</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>أكشنات جماعية ذكية (جديد)</h3></div>
+            <div class="inline-form">
+              <button class="btn btn--sm" id="inviteAllVipBtn" style="flex:1">⭐ رفع كل الـ VIP الحاضرين دلوقتي</button>
+              <button class="btn btn--sm" id="kickAllBlacklistedBtn" style="flex:1;border-color:var(--danger);color:var(--danger)">⛔ طرد كل القايمة السودة الحاضرة دلوقتي</button>
+            </div>
+            <div class="inline-form" style="margin-top:8px">
+              <button class="btn btn--sm" id="repeatLastActionBtn" disabled style="flex:1"><svg aria-hidden="true"><use href="/icons.svg#i-refresh"></use></svg>كرر آخر إجراء جماعي — لا يوجد إجراء بعد</button>
+              <button class="btn btn--sm" id="leaveChannelBtn" style="border-color:var(--danger);color:var(--danger)"><svg aria-hidden="true"><use href="/icons.svg#i-stop"></use></svg>مغادرة الغرفة</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>مايكروز (أكشنات مركّبة بدوسة واحدة)</h3></div>
+            <div class="macro-card">
+              <span><svg aria-hidden="true"><use href="/icons.svg#i-mic"></use></svg></span><b>وضع مقابلة</b><span class="hint" style="margin:0">قفل اليد + كتم الكل</span>
+              <button class="btn btn--sm" id="macroInterviewBtn">تشغيل</button>
+            </div>
+            <div class="macro-card">
+              <span><svg aria-hidden="true"><use href="/icons.svg#i-down"></use></svg></span><b>تنظيف الغرفة</b><span class="hint" style="margin:0">إنزال كل المتحدثين غير المشرفين</span>
+              <button class="btn btn--sm" id="macroCleanBtn">تشغيل</button>
+            </div>
+            <div class="macro-card">
+              <span><svg aria-hidden="true"><use href="/icons.svg#i-lock"></use></svg></span><b>مشهد بدء التسجيل</b><span class="hint" style="margin:0">قفل اليد + كتم الكل + إغلاق المحادثة</span>
+              <button class="btn btn--sm" id="macroRecordSceneBtn">تشغيل</button>
+            </div>
+            <div class="macro-card" style="border-color:var(--warm)">
+              <span><svg aria-hidden="true"><use href="/icons.svg#i-command"></use></svg></span><b>وضع الحدث</b><span class="hint" style="margin:0">كتم تلقائي، سقف للمتحدثين، ودور بالتوقيت</span>
+              <span class="toggle-switch"><input type="checkbox" id="eventModeToggle" /><span class="toggle-track"></span></span>
+            </div>
+            <div class="inline-form">
+              <input type="text" id="scenePresetName" placeholder="اسم مشهد جديد" style="flex:1" />
+              <button class="btn btn--sm" id="saveScenePresetBtn"><svg aria-hidden="true"><use href="/icons.svg#i-check"></use></svg>حفظ الإعدادات كمشهد</button>
+            </div>
+            <ul class="chip-list" id="scenePresetsList"></ul>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>أطول متكلمين (مباشر)</h3></div>
+            <div id="quickTopTalkersList" class="user-list"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>آخر 5 أكشنات جماعية</h3></div>
+            <div id="quickRecentBulkList" class="audit-list"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>ساعات هدوء تلقائية (يومية)</h3></div>
+            <div class="inline-form">
+              <label style="flex:1">من الساعة <input type="time" id="quietHoursStart" /></label>
+              <label style="flex:1">لحد الساعة <input type="time" id="quietHoursEnd" /></label>
+              <span class="toggle-switch" title="تفعيل/إيقاف"><input type="checkbox" id="quietHoursToggle" /><span class="toggle-track"></span></span>
+            </div>
+            <p class="hint">لو مفعّلة، هتقفل رفع الإيد وتكتم أي سبيكر جديد تلقائي في الفترة دي كل يوم.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <h3>اختصارات لوحة المفاتيح</h3>
+              <span class="pill pill--warn">تعمل فقط لما نافذة Clubhouse mod by Darhous تكون الفوكس</span>
+            </div>
+            <table class="kbd-table">
+              <tr><td><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>M</kbd></td><td>كتم الكل</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>I</kbd></td><td>رفع الكل</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>L</kbd></td><td>إنزال الجميع</td></tr>
+            </table>
+            <p class="hint">صفحة ويب مش تطبيق Electron، فالاختصارات دي تعمل بس والنافذة هي الفوكس — مش خلفية حقيقية وانت فاتح Clubdeck.</p>
+          </div>
+          </div>
+        </section>
+
+        <section class="panel" id="tab-roomchat">
+          <header class="workspace-heading">
+            <div class="workspace-title-block"><div><h2>شات الروم</h2><span id="roomChatTopic">اختار غرفة علشان تعرض الشات</span></div></div>
+            <span class="pill" id="roomChatConnection">غير متصل</span>
+          </header>
+          <div class="room-chat-layout">
+            <div class="card room-chat-main">
+              <div class="room-chat-toolbar">
+                <span id="roomChatCount">رسائل الغرفة</span>
+                <button type="button" class="btn btn--ghost" id="roomChatRefresh">تحديث</button>
+              </div>
+              <div class="room-chat-scroll" id="roomChatScroll" tabindex="0" aria-label="رسائل شات الروم">
+                <button type="button" class="btn btn--ghost room-chat-older" id="roomChatOlder" hidden>تحميل رسائل أقدم</button>
+                <p class="empty-hint room-chat-empty" id="roomChatEmpty">اختار غرفة من الغرف المباشرة أو التحكم السريع. الرسائل هتظهر هنا.</p>
+                <div id="roomChatMessages" role="log" aria-label="شات الغرفة" aria-live="polite" aria-relevant="additions text"></div>
+              </div>
+              <button type="button" class="btn btn--ghost" id="roomChatBottom" hidden>↓ أحدث الرسائل</button>
+              <form id="roomChatSendForm" class="room-chat-composer">
+                <label for="roomChatMessage">رسالتك في الغرفة</label>
+                <textarea id="roomChatMessage" rows="3" maxlength="1000" placeholder="اكتب رسالة…" aria-describedby="roomChatComposeHint" disabled></textarea>
+                <div class="room-chat-compose-actions">
+                  <label class="visually-hidden" for="roomChatMention">إدراج اسم شخص</label>
+                  <select id="roomChatMention" disabled><option value="">@ منشن لشخص</option></select>
+                  <span id="roomChatChars" class="hint">0 / 1000</span>
+                  <button type="submit" class="btn btn--accent" id="roomChatSend" disabled>إرسال</button>
+                </div>
+                <p class="hint" id="roomChatComposeHint">Enter للإرسال · Shift + Enter لسطر جديد. الإرسال يحتاج انضمام الحساب للغرفة.</p>
+              </form>
+            </div>
+            <aside class="card room-chat-welcome" aria-labelledby="roomChatWelcomeHeading">
+              <h3 id="roomChatWelcomeHeading">ترحيب في الشات</h3>
+              <p class="hint">رسالة مستقلة باسم كل شخص موجود في الغرفة، من حسابك النشط.</p>
+              <form id="roomChatSettingsForm">
+                <label for="roomChatTemplate">نص الترحيب</label>
+                <textarea id="roomChatTemplate" rows="4" maxlength="800" aria-describedby="roomChatTemplateHint">ازيك يا {الاسم} منورنا ❤️</textarea>
+                <p class="hint" id="roomChatTemplateHint">سيب <code>{الاسم}</code> مكان الاسم؛ بيتبدل تلقائيًا.</p>
+                <p class="room-chat-preview" id="roomChatPreview">ازيك يا أحمد منورنا ❤️</p>
+                <label class="room-chat-toggle"><input type="checkbox" id="roomChatAutoWelcome" /> ترحيب تلقائي بالداخلين الجدد</label>
+                <p class="hint">بعد حفظ التفعيل، يرحب بالداخلين الجدد فقط. لا يعيد الترحيب بالحضور عند فتح التاب.</p>
+                <div class="room-chat-settings-actions">
+                  <button type="submit" class="btn btn--accent" id="roomChatSave">حفظ</button>
+                  <button type="button" class="btn btn--ghost" id="roomChatDefault">استعادة النص الافتراضي</button>
+                </div>
+              </form>
+              <div class="room-chat-broadcast">
+                <button type="button" class="btn btn--accent" id="roomChatWelcomeAll" disabled>ترحيب بالكل</button>
+                <button type="button" class="btn" id="roomChatWelcomeMods" disabled>ترحيب بالمودريتورز</button>
+                <p class="hint" id="roomChatAudience">مفيش غرفة متصلة</p>
+              </div>
+              <div id="roomChatOperation" hidden>
+                <p id="roomChatProgress" role="status"></p>
+                <progress id="roomChatProgressBar" max="1" value="0" aria-label="تقدم رسائل الترحيب"></progress>
+                <button type="button" class="btn btn--danger" id="roomChatCancel">إلغاء باقي الترحيب</button>
+              </div>
+              <p class="hint">٥ ثواني على الأقل بين الطلبات، وبحد محافظ ٣ طلبات ترحيب/تفاعل في الدقيقة. الترحيب بنفس النص يُتخطى لمدة ٢٤ ساعة محليًا، ولا يُعاد تلقائيًا عند رفض Clubhouse. التأخير يقلل احتمال التقييد ولا يضمن منعه.</p>
+            </aside>
+          </div>
+          <p class="room-chat-notice" id="roomChatNotice" role="status" aria-live="polite"></p>
+          <p class="hint" id="roomChatLimitations">المنشن يُرسل بصيغة @اسم المستخدم كما في التطبيق؛ وصول إشعار للطرف الآخر يعتمد على Clubhouse.</p>
+        </section>
+
+        <section class="panel effects-workspace" id="tab-effects">
+          <header class="workspace-heading">
+            <div class="workspace-title-block"><span class="workspace-heading-icon" aria-hidden="true"><svg><use href="/icons.svg#i-reaction"></use></svg></span><div><h2>تأثيرات</h2><span>بث تأثيرات صوتية وبصرية على الغرفة كلها دفعة واحدة.</span></div></div>
+          </header>
+          <div class="role-banner effects-banner">
+            <span class="pill pill--good"><svg aria-hidden="true"><use href="/icons.svg#i-reaction"></use></svg>بث جماعي</span>
+            <span>كل زرار هنا بيبعت لكل الحاضرين في الغرفة المتصلة دلوقتي. عايز تستهدف شخص واحد بس؟ استخدم نافذة الرياكت العادية من أي قائمة أعضاء.</span>
+          </div>
+          <div class="role-banner effects-banner effects-banner--cooldown" id="broadcastCooldownHint" style="display:none"></div>
+
+          <div class="card effects-catalog-card" id="effectsCatalogCard">
+            <div class="card-head"><h3>🔊 كتالوجات الغرفة الحقيقية</h3></div>
+            <p class="hint" style="margin-top:0">من نفس بيانات Clubhouse الحية للغرفة المتصلة دلوقتي.</p>
+            <div class="effects-catalog-group">
+              <small>بروفايل</small>
+              <div class="emoji-grid effects-grid" id="effectsProfileGrid"></div>
+            </div>
+            <div class="effects-catalog-group">
+              <small>الغرفة</small>
+              <div class="emoji-grid effects-grid" id="effectsChannelGrid"></div>
+            </div>
+            <div class="effects-catalog-group">
+              <small>🔊 صوت</small>
+              <div class="emoji-grid effects-grid" id="effectsAudioGrid"></div>
+            </div>
+            <p class="empty-hint" id="effectsCatalogEmpty">لسه مفيش غرفة متصلة — ادخل غرفة الأول من الهالواي أو التحكم السريع.</p>
+          </div>
+
+          <div class="card card--primary">
+            <div class="card-head"><h3>👋 ترحيب</h3></div>
+            <label class="action-card action-card--toggle" style="padding:10px 14px">
+              <span class="action-icon">❤️</span>
+              <span class="action-title">ريأكت ترحيب تلقائي لأي مستمع يدخل الغرفة (اسمه + قلب)</span>
+              <span class="toggle-switch"><input type="checkbox" id="welcomeReactionToggle" /><span class="toggle-track"></span></span>
+            </label>
+            <label class="action-card action-card--toggle" style="padding:10px 14px">
+              <span class="action-icon">🎙️</span>
+              <span class="action-title">ترحيب تلقائي بالمتحدثين الجداد (اسمه + قلب)</span>
+              <span class="toggle-switch"><input type="checkbox" id="welcomeSpeakerReactionToggle" /><span class="toggle-track"></span></span>
+            </label>
+            <label class="action-card action-card--toggle" style="padding:10px 14px">
+              <span class="action-icon">🛡️</span>
+              <span class="action-title">ترحيب تلقائي بالمودريتورز الجداد (اسمه + قلب)</span>
+              <span class="toggle-switch"><input type="checkbox" id="welcomeModeratorReactionToggle" /><span class="toggle-track"></span></span>
+            </label>
+            <p class="hint" style="margin-top:0">كل خيار مستقل عن التاني، وبيتبعت واحد بس كل ~3 ثواني حتى لو دخل ناس كتير مرة واحدة — عشان محدش يضرب حماية Clubhouse من السبام.</p>
+            <button class="btn btn--accent" id="welcomeAllBtn" type="button" style="width:100%">👋 رحّب بكل الموجودين دلوقتي</button>
+            <p class="hint">٥ ثواني على الأقل بين كل طلب والتالي، وبحد محافظ ٣ طلبات ترحيب/تفاعل في الدقيقة. قد يتوقف الإرسال مؤقتًا لاستكمال فترة الانتظار.</p>
+            <p class="hint" id="welcomeAllHint">بيبعت اسم كل شخص + قلب له، بفاصل أبطأ من البث العادي (أول 50 شخص لو الغرفة أكبر).</p>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>🎉 دفعات كبيرة</h3></div>
+            <div class="effects-burst-row">
+              <button class="btn btn--accent" id="effectsFiftyHeartsBtn" type="button">❤️ 50 قلب على الكل</button>
+              <button class="btn btn--accent" id="effectsFireComboBtn" type="button">🔥 كومبو 100 على الكل</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>🎞️ GIF على الكل</h3><span class="pill">عقد مرشح</span></div>
+            <p class="hint" style="margin-top:0">Clubhouse نفسه معندوش بث GIF جماعي حقيقي، فبيتبعت لكل شخص حاضر لوحده ورا بعض.</p>
+            <form class="inline-form" id="effectsGifSearchForm">
+              <input type="search" id="effectsGifSearchInput" placeholder="ابحث في Giphy…" style="flex:1" />
+              <button class="btn btn--sm">بحث</button>
+            </form>
+            <div class="gif-results-grid" id="effectsGifResults"></div>
+            <p class="empty-hint" id="effectsGifEmpty">ابحث بكلمة — محتاج مفتاح Giphy API متسجّل في الإعدادات.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>آخر تأثير</h3></div>
+            <p class="hint" id="lastEffectSummary" style="margin:0">لسه مفيش تأثير اتبعت الجلسة دي.</p>
+            <button class="btn btn--sm" id="repeatLastEffectBtn" type="button" disabled>كرر آخر تأثير</button>
+          </div>
+        </section>
+
+        <section class="panel" id="tab-queue">
+          <header class="workspace-heading workspace-heading--queue">
+            <div class="workspace-title-block"><span class="workspace-heading-icon" aria-hidden="true"><svg><use href="/icons.svg#i-queue"></use></svg></span><div><h2>طابور طلبات التحدث</h2><span>رتّب الطلبات، راقب وقت الانتظار، وانقل الأشخاص إلى المسرح.</span></div></div>
+            <div class="workspace-heading-actions">
+              <button class="btn btn--ghost btn--sm" id="inviteNextBtn">دعوة الطلب التالي</button>
+              <button class="btn btn--accent btn--sm" id="inviteAllBtn2">دعوة كل الطابور</button>
+            </div>
+          </header>
+          <div class="inline-form" style="margin-bottom:10px">
+            <input type="text" id="queueFilterInput" placeholder="فلترة الطابور بالاسم…" style="flex:1" />
+            <select id="queueSortSelect">
+              <option value="default">ترتيب الرفع (كما هو)</option>
+              <option value="oldest">الأقدم أولاً</option>
+              <option value="newest">الأحدث أولاً</option>
+              <option value="vip">VIP أولاً</option>
+              <option value="manual">ترتيبي اليدوي</option>
+            </select>
+            <label class="chip-toggle"><input type="number" id="longWaitThreshold" value="5" min="1" style="width:44px" /> تنبيه انتظار أطول من (د)</label>
+          </div>
+          <p class="hint" style="margin:0 0 8px">متوسط وقت الانتظار قبل القبول: <span id="avgWaitTime" class="ltr-num">—</span></p>
+          <div class="inline-form" style="margin-bottom:10px">
+            <span style="flex:1;font-size:.82rem;color:var(--fg-muted)">حدد مربعات "استثناء" جوه الطابور وبعدين ادعي الباقي دفعة واحدة</span>
+            <button class="btn btn--sm" id="inviteQueueExceptBtn"><svg aria-hidden="true"><use href="/icons.svg#i-check"></use></svg>دعوة الباقي عدا المستثنين</button>
+            <button class="btn btn--sm" id="restoreQueueBackupBtn">♻ استرجاع وادعي آخر نسخة محفوظة</button>
+          </div>
+          <div id="queueList" class="user-list"></div>
+          <p class="empty-hint" id="queueEmpty">محدش رافع إيده دلوقتي.</p>
+          <div class="card">
+            <div class="card-head"><h3>متحدثون مقترحون من Clubhouse</h3></div>
+            <div id="suggestedSpeakersList" class="user-list"></div>
+            <p class="empty-hint" id="suggestedSpeakersEmpty">مفيش اقتراحات دلوقتي.</p>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>آخر المتكلمين في غرفك الأخيرة</h3></div>
+            <div id="recentSpeakersList" class="user-list"></div>
+            <p class="empty-hint" id="recentSpeakersEmpty">بنجيب البيانات…</p>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h3>عارضين ريبلاي الغرفة المتصلة</h3>
+              <button class="btn btn--ghost btn--sm" id="refreshReplayersBtn">تحديث</button>
+            </div>
+            <div id="replayersList" class="user-list"></div>
+            <p class="empty-hint" id="replayersEmpty">مفيش (أو الغرفة لسه مسجّلتش ريبلاي).</p>
+          </div>
+        </section>
+
+        <section class="panel workspace-members" id="tab-members">
+          <header class="workspace-heading">
+            <div class="workspace-title-block"><span class="workspace-heading-icon" aria-hidden="true"><svg><use href="/icons.svg#i-users"></use></svg></span><div><h2>المسرح والجمهور</h2><span>صورة تشغيلية للحضور مع إجراءات العضو الفردية والجماعية.</span></div></div>
+            <div class="inline-form" style="margin:0">
+              <input type="text" id="memberFilterInput" placeholder="فلترة بالاسم…" style="min-width:140px" />
+              <select id="memberSortSelect">
+                <option value="default">ترتيب افتراضي</option>
+                <option value="name">أبجدي</option>
+                <option value="time">وقت الانضمام</option>
+              </select>
+              <label class="chip-toggle"><input type="checkbox" id="memberNewOnlyToggle" /> جديد بس</label>
+              <button class="btn btn--ghost btn--sm" id="exportMembersCsvBtn"><svg aria-hidden="true"><use href="/icons.svg#i-download"></use></svg>CSV</button>
+              <button class="btn btn--accent btn--sm" id="welcomeAllBtnMembers" type="button">👋 رحّب بالكل</button>
+            </div>
+          </header>
+          <div class="bulk-bar" id="bulkBar" hidden>
+            <span id="bulkCount">0 متحدد</span>
+            <button class="btn btn--sm" id="bulkMuteBtn">كتم المحددين</button>
+            <button class="btn btn--sm" id="bulkLowerBtn">إنزال المحددين</button>
+            <button class="btn btn--sm" id="bulkReactBtn">رياكت للمحددين</button>
+            <button class="btn btn--sm" id="bulkNoteBtn">ملاحظة جماعية</button>
+            <button class="btn btn--sm" id="bulkClearBtn">إلغاء التحديد</button>
+          </div>
+          <div class="user-row user-row--all" id="reactAllRow">
+            <div class="user-avatar user-avatar--all">✦</div>
+            <div class="user-name">الكل</div>
+            <div class="user-meta">دبل كليك يبعت رياكت لكل الحاضرين</div>
+          </div>
+          <section class="stage-command-deck" aria-labelledby="stageDeckTitle">
+            <header class="stage-deck-head">
+              <span class="stage-deck-symbol" aria-hidden="true"><svg><use href="/icons.svg#i-mic"></use></svg></span>
+              <span><h3 id="stageDeckTitle">مسرح القيادة</h3><small id="stageSignalTruth">حالة التحدث تظهر فقط عندما يرسلها Clubhouse.</small></span>
+              <span class="stage-deck-count"><b id="speakersHeaderCount" class="ltr-num">0</b><small>على المسرح</small></span>
+              <span class="pill pill--good" id="topTalkerBadge" hidden></span>
+            </header>
+            <div class="stage-command-row" aria-labelledby="stageModeratorsTitle">
+              <div class="stage-row-label"><b id="stageModeratorsTitle">صف القيادة</b><small>المودريتورز الحاليون</small></div>
+              <div id="moderatorsList" class="stage-moderators-list"></div>
+              <p class="empty-hint" id="moderatorsEmpty">لا يوجد مودريتور ظاهر في بيانات الغرفة.</p>
+            </div>
+            <div class="stage-deck-body">
+              <div class="stage-seat-field">
+                <div class="stage-field-line" aria-hidden="true"><span></span><span></span><span></span></div>
+                <div id="speakersList" class="user-list stage-seats-grid"></div>
+                <p class="empty-hint" id="stageSeatsEmpty">المسرح فارغ حاليًا.</p>
+              </div>
+              <aside class="member-inspector" id="memberInspector" aria-live="polite" aria-labelledby="memberInspectorTitle">
+                <div class="member-inspector-empty" id="memberInspectorEmpty">
+                  <svg aria-hidden="true"><use href="/icons.svg#i-profile"></use></svg>
+                  <h3 id="memberInspectorTitle">لوحة العضو</h3>
+                  <p>اختر مقعدًا من المسرح لعرض هويته وحالته والأوامر التي يسمح بها دورك.</p>
+                </div>
+                <div id="memberInspectorContent" hidden></div>
+              </aside>
+            </div>
+          </section>
+          <div class="member-group member-group--audience">
+            <h4><span class="zone-marker zone-marker--audience" aria-hidden="true"><svg><use href="/icons.svg#i-audience"></use></svg></span><span>الجمهور</span> <span id="listenersHeaderCount" class="pill">0</span></h4>
+            <div id="listenersList" class="user-list"></div>
+          </div>
+          <p class="hint">انقر مرتين على أي عضو لفتح قائمة التفاعل. استخدم مربعات التحديد لتنفيذ إجراء واحد على مجموعة أعضاء.</p>
+        </section>
+
+        <section class="panel" id="tab-search">
+          <header class="workspace-heading">
+            <div class="workspace-title-block"><span class="workspace-heading-icon" aria-hidden="true"><svg><use href="/icons.svg#i-search"></use></svg></span><div><h2>البحث داخل الغرفة</h2><span>اعثر بسرعة على أي عضو حاضر بالاسم أو المعرّف.</span></div></div>
+          </header>
+          <div class="card">
+            <div class="card-head"><h3>بحث سريع</h3></div>
+            <form class="inline-form" id="searchForm">
+              <input type="text" id="searchInput" placeholder="اسم / يوزرنيم / User ID داخل الغرفة الحالية" class="ltr-input" />
+              <button class="btn btn--accent btn--sm">بحث</button>
+            </form>
+            <ul class="chip-list" id="searchHistoryList"></ul>
+            <p class="hint" id="searchResultCount" style="margin:0 0 8px"></p>
+            <div id="searchResults" class="user-list"></div>
+            <p class="empty-hint" id="searchEmpty">اكتب اسم للبحث بين الحاضرين في الغرفة المتصلة. (دوس / من أي تبويب يفتح البحث)</p>
+          </div>
+        </section>
+
+        <section class="panel" id="tab-advanced">
+          <header class="workspace-heading">
+            <div class="workspace-title-block"><span class="workspace-heading-icon" aria-hidden="true"><svg><use href="/icons.svg#i-shield"></use></svg></span><div><h2>الأوامر المتقدمة</h2><span>أتمتة وحماية وتنظيم إضافي، وكل أداة لها مفتاح مستقل.</span></div></div>
+            <div class="workspace-heading-state"><span class="status-lamp" aria-hidden="true"></span><b>تحكم حساس للصلاحيات</b></div>
+          </header>
+          <div class="role-banner" style="border-color:var(--warm);background:linear-gradient(90deg, rgba(245,158,11,.08), transparent)">
+            <span class="pill pill--warn"><svg aria-hidden="true"><use href="/icons.svg#i-shield"></use></svg>تنبيه تشغيل</span>
+            <span>20 ميزة إضافية للتحكم في الأدوار، حماية المايك، القايمة السودة، السعة، والتنظيم — كل ميزة ليها تفعيل/إيقاف مستقل.</span>
+          </div>
+          <div class="card card--primary">
+            <div class="card-head"><h3><svg aria-hidden="true"><use href="/icons.svg#i-bell"></use></svg>تنبيهات المشرفين المباشرة</h3></div>
+            <div id="modAlertsList" class="audit-list"></div>
+            <p class="empty-hint" id="modAlertsEmpty">مفيش تنبيهات لسه — هتظهر هنا أول ما تحصل (مودريتور وحيد، مايك صامت، دخول قايمة سودة...).</p>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <h3>مودريتور احتياطي تلقائي</h3>
+              <span class="toggle-switch" title="تفعيل/إيقاف الميزة"><input type="checkbox" id="autoBackupModToggle" /><span class="toggle-track"></span></span>
+            </div>
+            <p class="hint" style="margin-top:0">لو المودريتورز خرجوا كلهم من الغرفة، أول شخص في القايمة دي موجود فعلاً هيترقّى مودريتور تلقائي.</p>
+            <form class="inline-form" id="modBackupForm">
+              <input type="text" placeholder="اسم أو يوزرنيم" id="modBackupInput" class="ltr-input" />
+              <button class="btn btn--accent btn--sm">إضافة</button>
+            </form>
+            <ul class="chip-list" id="modBackupList"></ul>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>حماية المايك من الاحتكار</h3></div>
+            <div class="inline-form">
+              <label style="flex:1">تجميد المايك بعد النزول (دقايق)
+                <input type="number" id="micCooldownInput" min="1" class="ltr-input ltr-num" style="width:100%" />
+              </label>
+              <span class="toggle-switch" title="تفعيل/إيقاف الميزة"><input type="checkbox" id="micCooldownToggle" /><span class="toggle-track"></span></span>
+            </div>
+            <p class="hint" style="margin-top:0">أي حد ينزل من المسرح (لأي سبب) مش هيقدر يرجع يتكلم قبل ما المدة دي تخلص — بينزل تلقائي لو رجع قبلها.</p>
+            <div class="inline-form">
+              <label style="flex:1">أقصى عدد مرات صعود للمايك للشخص الواحد
+                <input type="number" id="maxMicTurnsInput" min="1" class="ltr-input ltr-num" style="width:100%" />
+              </label>
+              <span class="toggle-switch" title="تفعيل/إيقاف الميزة"><input type="checkbox" id="maxMicTurnsToggle" /><span class="toggle-track"></span></span>
+            </div>
+            <p class="hint" style="margin-top:0">بيمنع الدعوات التلقائية (VIP / دور تلقائي / دعوة الجدد) بس لأي شخص وصل للحد ده — مش بيمنعك تدعوه يدوي.</p>
+            <div class="inline-form">
+              <label style="flex:1">كشف المايك الصامت (Ghost Mic) بعد (دقايق)
+                <input type="number" id="ghostMicInput" min="1" class="ltr-input ltr-num" style="width:100%" />
+              </label>
+              <span class="toggle-switch" title="تفعيل/إيقاف الميزة"><input type="checkbox" id="ghostMicToggle" /><span class="toggle-track"></span></span>
+            </div>
+            <p class="hint" style="margin-top:0">تنبيه بس (مش إنزال تلقائي) — Clubhouse ممكن ميرجعش إشارة "بيتكلم دلوقتي" في كل الحالات، فالميزة دي تقريبية.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>القايمة السودة الذكية</h3></div>
+            <div class="inline-form">
+              <label style="flex:1">انتهاء صلاحية بند القايمة السودة تلقائياً بعد (أيام)
+                <input type="number" id="blacklistExpireInput" min="1" class="ltr-input ltr-num" style="width:100%" />
+              </label>
+              <span class="toggle-switch" title="تفعيل/إيقاف الميزة"><input type="checkbox" id="blacklistExpireToggle" /><span class="toggle-track"></span></span>
+            </div>
+            <label class="action-card action-card--toggle" style="padding:10px 14px">
+              <span class="action-icon">⛔</span>
+              <span class="action-title">إضافة تلقائية للقايمة السودة لأي مطرود</span>
+              <span class="toggle-switch"><input type="checkbox" id="autoBlacklistOnKickToggle" /><span class="toggle-track"></span></span>
+            </label>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>السعة وجدولة إنهاء الغرفة (Curfew)</h3></div>
+            <div class="inline-form">
+              <label style="flex:1">تنبيه لو عدد الحضور وصل لـ
+                <input type="number" id="roomCapacityInput" min="1" class="ltr-input ltr-num" style="width:100%" />
+              </label>
+              <span class="toggle-switch" title="تفعيل/إيقاف الميزة"><input type="checkbox" id="roomCapacityToggle" /><span class="toggle-track"></span></span>
+            </div>
+            <div class="inline-form" style="margin-top:8px">
+              <input type="number" id="curfewMinutesInput" value="30" min="1" class="ltr-num" style="max-width:90px" />
+              <button class="btn btn--sm" id="curfewScheduleBtn" style="flex:1">⏰ جدولة إنهاء الغرفة بعد دقايق</button>
+            </div>
+            <p class="hint">بتستخدم نفس نظام الجدولة الموجود في الإعدادات — تقدر تشوفها/تلغيها من هناك.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>لوحة مراقبة عدة غرف مرة واحدة</h3></div>
+            <form class="inline-form" id="multiRoomForm">
+              <input type="text" id="multiRoomInput" placeholder="كود/اسم الغرفة (channel)" class="ltr-input" style="flex:1" />
+              <button class="btn btn--accent btn--sm">➕ تابع الغرفة دي</button>
+            </form>
+            <div id="multiRoomGrid" class="hallway-grid"></div>
+            <p class="empty-hint" id="multiRoomEmpty">مفيش غرف بتتابعها — دي متابعة قراءة فقط، من غير ما تقطع اتصالك بالغرفة الحالية.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>جدول نوبات المودريتور</h3></div>
+            <form class="inline-form" id="shiftForm">
+              <input type="text" id="shiftNameInput" placeholder="اسم المودريتور" style="flex:1" />
+              <select id="shiftDayInput">
+                <option value="سبت">سبت</option><option value="حد">حد</option><option value="اتنين">اتنين</option>
+                <option value="تلات">تلات</option><option value="اربع">اربع</option><option value="خميس">خميس</option><option value="جمعة">جمعة</option>
+              </select>
+              <input type="time" id="shiftStartInput" class="ltr-num" />
+              <input type="time" id="shiftEndInput" class="ltr-num" />
+              <button class="btn btn--accent btn--sm">إضافة نوبة</button>
+            </form>
+            <ul class="chip-list" id="shiftsList"></ul>
+            <p class="empty-hint" id="shiftsEmpty">مفيش نوبات متسجّلة — تنظيمي جوه Clubhouse mod by Darhous بس، مش متصل بـ Clubhouse.</p>
+          </div>
+        </section>
+
+        <section class="panel" id="tab-social">
+          <header class="workspace-heading">
+            <div class="workspace-title-block"><span class="workspace-heading-icon" aria-hidden="true"><svg><use href="/icons.svg#i-social"></use></svg></span><div><h2>الشبكة الاجتماعية</h2><span>البحث، المتابعون، الموجات، والاقتراحات في مساحة موحّدة.</span></div></div>
+          </header>
+          <div class="card card--primary">
+            <div class="card-head"><h3>بحث عن أي حد على Clubhouse</h3></div>
+            <form class="inline-form" id="globalSearchForm">
+              <input type="text" id="globalSearchInput" placeholder="اسم أو يوزرنيم" class="ltr-input" />
+              <button class="btn btn--accent btn--sm">بحث</button>
+            </form>
+            <ul class="chip-list" id="globalSearchHistoryList"></ul>
+            <div class="inline-form" style="margin-top:8px">
+              <label style="flex:1;font-size:.78rem;color:var(--fg-muted)">أقل عدد متابعين
+                <input type="number" id="globalSearchMinFollowers" min="0" class="ltr-input" style="width:100%" />
+              </label>
+            </div>
+            <div id="globalSearchResults" class="user-list"></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h3>مين أونلاين دلوقتي من متابعينك</h3>
+              <button class="btn btn--ghost btn--sm" id="refreshFriendsOnlineBtn">تحديث</button>
+            </div>
+            <label class="chip-toggle" style="margin-bottom:8px"><input type="checkbox" id="friendsJoinAlertToggle" /> نبّهني لما حد منهم يدخل/يغيّر غرفة</label>
+            <div id="friendsOnlineList" class="user-list"></div>
+            <p class="empty-hint" id="friendsOnlineEmpty">مفيش حد من متابعينك في غرفة مفتوحة دلوقتي.</p>
+            <p class="hint">بيدوّر بس في الغرف المفتوحة الظاهرة في الهالواي — ممكن ميلقاش صديق مستمع بس في غرفة كبيرة.</p>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h3>متابعينك</h3>
+              <button class="btn btn--ghost btn--sm" id="exportFollowersBtn"><svg aria-hidden="true"><use href="/icons.svg#i-download"></use></svg>CSV</button>
+            </div>
+            <div id="followersList" class="user-list"></div>
+            <p class="empty-hint" id="followersEmpty">بنجيب المتابعين…</p>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>آخر تفاعل اجتماعي</h3></div>
+            <div id="recentInteractionsList" class="audit-list"></div>
+            <p class="empty-hint" id="recentInteractionsEmpty">مفيش تفاعلات لسه.</p>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>متجاهَلين محلياً (مخفيين من عندك بس)</h3></div>
+            <ul class="chip-list" id="mutedUsersList"></ul>
+            <p class="empty-hint" id="mutedUsersEmpty">مفيش حد متجاهَل.</p>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h3>الموجات (Waves)</h3>
+              <div class="chat-loc-toggle">
+                <button class="btn btn--ghost btn--sm active" data-wave="received">وصلتني</button>
+                <button class="btn btn--ghost btn--sm" data-wave="sent">بعتها أنا</button>
+              </div>
+            </div>
+            <div id="wavesList" class="user-list"></div>
+            <p class="empty-hint" id="wavesEmpty">مفيش موجات.</p>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h3>اكتشف أشخاص</h3>
+              <button class="btn btn--ghost btn--sm" id="refreshDiscoverBtn">تحديث</button>
+            </div>
+            <div id="discoverList" class="user-list"></div>
+            <p class="empty-hint" id="discoverEmpty">بنجيب اقتراحات…</p>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>مقترحات دعوة</h3></div>
+            <div id="suggestedInvitesList" class="user-list"></div>
+            <p class="empty-hint" id="suggestedInvitesEmpty">مفيش اقتراحات دلوقتي.</p>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>المحظورون</h3></div>
+            <div id="blockedList" class="user-list"></div>
+            <p class="empty-hint" id="blockedEmpty">مفيش حد محظور.</p>
+          </div>
+        </section>
+
+        <section class="panel" id="tab-friends">
+          <div class="card card--primary">
+            <div class="card-head">
+              <h3>أصدقاء أونلاين دلوقتي</h3>
+              <button class="btn btn--ghost btn--sm" id="refreshFriendsOnlineFullBtn">تحديث</button>
+            </div>
+            <div id="friendsOnlineListFull" class="user-list"></div>
+            <p class="empty-hint" id="friendsOnlineFullEmpty">بنحمّل…</p>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>أصدقاء أوفلاين — آخر ظهور رصده Clubhouse mod by Darhous</h3></div>
+            <p class="hint" style="margin-top:0">دي مش بيانات كلوبهاوس الرسمية — كلوبهاوس نفسه معندوش API بيرجّع آخر ظهور لحد. دي فقط آخر مرة Clubhouse mod by Darhous رصد الصديق ده أونلاين وهو شغال في الخلفية.</p>
+            <div id="friendsOfflineList" class="user-list"></div>
+            <p class="empty-hint" id="friendsOfflineEmpty">لسه Clubhouse mod by Darhous ما رصدش حد أونلاين.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <h3>الإشعارات</h3>
+              <div style="display:flex;gap:6px">
+                <button class="btn btn--ghost btn--sm" id="markAllNotificationsReadBtn">تحديد الكل كمقروء</button>
+                <button class="btn btn--ghost btn--sm" id="clearNotificationsBtn">مسح الكل</button>
+              </div>
+            </div>
+            <p class="hint" style="margin-top:0">صديق دخل غرفة + تنبيهات المشرفين الحقيقية (مودريتور وحيد، سقف الحضور، مايك صامت، دخول قايمة سوداء، ترحيب سبيكر) في مكان واحد — دوس على أي إشعار له غرفة عشان تدخلها على طول.</p>
+            <div id="friendsNotificationList" class="audit-list"></div>
+            <p class="empty-hint" id="friendsNotificationEmpty">مفيش إشعارات لسه.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>تحكمات المراقبة</h3></div>
+            <label class="action-card action-card--toggle" style="padding:9px 12px">
+              <span class="action-icon">📡</span>
+              <span class="action-title">مراقبة الأصدقاء في الخلفية (حتى من غير غرفة متصلة)</span>
+              <span class="toggle-switch"><input type="checkbox" id="friendsWatcherEnabledToggle" /><span class="toggle-track"></span></span>
+            </label>
+            <div class="inline-form" style="margin-top:8px">
+              <label style="flex:1">الفاصل الزمني بين كل فحص (ثواني)
+                <input type="number" id="friendsWatcherIntervalInput" min="15" class="ltr-input ltr-num" style="width:100%" />
+              </label>
+            </div>
+            <label class="action-card action-card--toggle" style="padding:9px 12px;margin-top:6px">
+              <span class="action-icon">👋</span>
+              <span class="action-title">إشعار لما صديق يدخل غرفة</span>
+              <span class="toggle-switch"><input type="checkbox" id="notifyOnFriendJoinToggle" /><span class="toggle-track"></span></span>
+            </label>
+            <label class="action-card action-card--toggle" style="padding:9px 12px;margin-top:6px">
+              <span class="action-icon">🔔</span>
+              <span class="action-title">ضم تنبيهات المشرفين لنفس فيد الإشعارات</span>
+              <span class="toggle-switch"><input type="checkbox" id="notifyOnModAlertToggle" /><span class="toggle-track"></span></span>
+            </label>
+          </div>
+        </section>
+
+        <section class="panel" id="tab-profile">
+          <header class="workspace-heading">
+            <div class="workspace-title-block"><span class="workspace-heading-icon" aria-hidden="true"><svg><use href="/icons.svg#i-profile"></use></svg></span><div><h2>الملف الشخصي</h2><span>راجع هوية الحساب وحدّث البيانات التي يدعمها Clubhouse.</span></div></div>
+          </header>
+          <div class="card" id="profileCard">
+            <p class="empty-hint" id="profileEmpty">بنجيب بروفايلك…</p>
+          </div>
+        </section>
+
+        <section class="panel platform-workspace" id="tab-platform">
+          <header class="platform-command-header">
+            <div class="workspace-title-block"><span class="workspace-heading-icon" aria-hidden="true"><svg><use href="/icons.svg#i-control"></use></svg></span><div>
+              <h2>مركز المنصة</h2>
+              <p>مصدر حقيقة العقود، تشخيص الجلسة، وتشغيل الأدوات الجماعية بحدود واضحة وقابلة للإلغاء.</p>
+            </div></div>
+            <div class="platform-health" id="platformHealth" data-health="idle">
+              <span class="status-lamp" aria-hidden="true"></span>
+              <span><b id="platformHealthTitle">في انتظار الفحص</b><small id="platformHealthMeta">لا تُرسل هذه الشاشة أي probe تلقائي إلى Clubhouse.</small></span>
+              <button class="btn btn--ghost btn--sm" id="refreshPlatformBtn" type="button">فحص محلي</button>
+            </div>
+          </header>
+
+          <div class="platform-layout">
+            <section class="platform-operations" aria-labelledby="operationStudioTitle">
+              <header><h3 id="operationStudioTitle">استوديو العمليات الآمنة</h3><p>نسخة حديثة من أفكار السكريبتات: معاينة أولًا، سقف تنفيذ، فاصل زمني، وإلغاء مباشر.</p></header>
+              <form id="operationStudioForm" class="operation-form">
+                <label><span>نوع العملية</span>
+                  <select id="operationKind">
+                    <option value="reaction-sequence">حملة تفاعلات محدودة</option>
+                    <option value="invite-listeners">دعوة جمهور إلى المسرح</option>
+                    <option value="lower-speakers">إخلاء المتحدثين غير المودريتورز</option>
+                    <option value="kick-blacklisted">إزالة القائمة السوداء الحاضرة</option>
+                  </select>
+                </label>
+                <label id="operationSequenceField"><span>التسلسل — افصل بمسافة</span><input id="operationSequence" type="text" value="👏 🔥 ❤️" dir="auto" maxlength="80" /></label>
+                <label id="operationScopeField"><span>النطاق</span>
+                  <select id="operationScope"><option value="speakers">المتحدثون</option><option value="listeners">الجمهور</option><option value="selected">الأعضاء المحددون</option></select>
+                </label>
+                <label id="operationCyclesField"><span>عدد الدورات</span><input id="operationCycles" type="number" min="1" max="3" value="1" class="ltr-num" /></label>
+                <label><span>الفاصل بالمللي ثانية</span><input id="operationInterval" type="number" min="600" max="5000" step="100" value="800" class="ltr-num" /></label>
+                <div class="operation-form-actions">
+                  <button class="btn btn--ghost" id="previewOperationBtn" type="button">معاينة الأهداف</button>
+                  <button class="btn btn--ghost" id="dryRunOperationBtn" type="button">اختبار بدون تنفيذ</button>
+                  <button class="btn btn--accent" id="runOperationBtn" type="submit">بدء العملية</button>
+                </div>
+              </form>
+              <div class="operation-preview" id="operationPreview" data-state="empty">
+                <span class="operation-preview-symbol" aria-hidden="true"><svg><use href="/icons.svg#i-shield"></use></svg></span>
+                <span><b id="operationPreviewTitle">لم تتم المعاينة بعد</b><small id="operationPreviewMeta">لن يبدأ أي تأثير حقيقي قبل التأكيد.</small></span>
+              </div>
+              <div class="operation-live" id="operationLive" hidden>
+                <div class="operation-progress-track" aria-hidden="true"><span id="operationProgressBar"></span></div>
+                <div><b id="operationLiveTitle">عملية جارية</b><small id="operationLiveMeta"></small></div>
+                <button class="btn btn--danger btn--sm" id="cancelOperationBtn" type="button">إلغاء الباقي</button>
+              </div>
+              <div class="operation-history" id="operationHistory"></div>
+            </section>
+
+            <aside class="platform-truth" aria-labelledby="apiTruthTitle">
+              <header><h3 id="apiTruthTitle">حقيقة الـAPI</h3><p>المؤكد منفصل عن التجريبي والقديم.</p></header>
+              <div class="endpoint-summary" id="endpointSummary"></div>
+              <label class="endpoint-filter"><span class="visually-hidden">فلترة العقود</span><input id="endpointFilterInput" type="search" placeholder="ابحث عن endpoint أو مجال…" class="ltr-input" /></label>
+              <div class="endpoint-list" id="endpointList"></div>
+            </aside>
+          </div>
+
+          <section class="platform-diagnostics" aria-labelledby="platformDiagnosticsTitle">
+            <div><h3 id="platformDiagnosticsTitle">تشخيص الجلسة</h3><p>يعرض حالة Clubhouse mod by Darhous والحساب والغرفة محليًا بدون تنفيذ أوامر مؤثرة.</p></div>
+            <div class="diagnostic-grid" id="platformDiagnostics"></div>
+            <button class="btn btn--ghost btn--sm" id="loadClubhouseSettingsBtn" type="button">قراءة إعدادات Clubhouse الآمنة</button>
+            <div class="account-settings-safe" id="clubhouseSettingsSafe" hidden></div>
+          </section>
+
+          <section class="platform-roadmap" aria-labelledby="platformRoadmapTitle">
+            <div><h3 id="platformRoadmapTitle">بوابة الميزات</h3><p>الأدوات المرشحة أصبحت قابلة للاستخدام بضغطة بشرية، مع إظهار حالة العقد قبل التنفيذ.</p></div>
+            <div class="feature-gateway-grid">
+              <article class="gateway-module"><header><svg><use href="/icons.svg#i-mic"></use></svg><span><b>إنشاء غرفة</b><small>create_channel · عقد مرشح</small></span></header><form id="createRoomGatewayForm"><input id="createRoomTopic" type="text" maxlength="120" placeholder="عنوان الغرفة" /><select id="createRoomMode"><option value="regular">مفتوحة</option><option value="social">سوشيال</option><option value="private">خاصة</option></select><button class="btn btn--accent btn--sm">مراجعة وإنشاء</button></form><output id="createRoomGatewayResult" class="gateway-output">لن يتم الإنشاء قبل التأكيد.</output></article>
+              <article class="gateway-module"><header><svg><use href="/icons.svg#i-house"></use></svg><span><b>اكتشاف الهاوسات</b><small>بحث ومتابعة بعقد مرشح</small></span></header><form id="houseDiscoveryForm"><input id="houseDiscoveryQuery" type="search" minlength="2" placeholder="ابحث باسم الهاوس" /><button class="btn btn--sm">بحث</button></form><div id="houseDiscoveryResults" class="gateway-list"><p class="empty-hint">ابدأ بكتابة اسم هاوس.</p></div></article>
+              <article class="gateway-module"><header><svg><use href="/icons.svg#i-users"></use></svg><span><b>أصدقاء أونلاين أدق</b><small>مباشر مقابل استنتاج الفيد</small></span></header><button class="btn btn--sm" id="compareFriendsBtn" type="button">تشغيل المقارنة</button><div id="friendsCompareResult" class="gateway-output">لم تبدأ المقارنة بعد.</div></article>
+              <article class="gateway-module"><header><svg><use href="/icons.svg#i-shield"></use></svg><span><b>مراقب التوافق</b><small>الإصدار والهيدرز والعقود</small></span></header><button class="btn btn--sm" id="compatibilityCheckBtn" type="button">فحص محلي آمن</button><div id="compatibilityResult" class="gateway-output">لا يعرض أي توكن أو هيدر هوية.</div></article>
+            </div>
+          </section>
+        </section>
+
+        <section class="panel accounts-workspace" id="tab-accounts">
+          <header class="workspace-heading"><div class="workspace-title-block"><span class="workspace-heading-icon" aria-hidden="true"><svg><use href="/icons.svg#i-profile"></use></svg></span><div><h2>إدارة الحسابات</h2><span>بدّل الحساب النشط أو أضف حسابًا جديدًا دون حفظ التوكن أو OTP على القرص.</span></div></div><span class="pill" id="accountSessionBadge">ذاكرة الجلسة فقط</span></header>
+          <div class="accounts-layout">
+            <section class="card accounts-active-card"><div class="card-head"><h3>الحسابات النشطة</h3><button class="btn btn--ghost btn--sm" id="refreshAccountsBtn" type="button"><svg><use href="/icons.svg#i-refresh"></use></svg>تحديث</button></div><p class="hint" id="accountCurrentInfo">جاري قراءة جلسات السيرفر…</p><div id="activeAccountsList" class="active-accounts-list"></div></section>
+            <section class="account-entry-stack">
+              <article class="card"><div class="card-head"><h3>إضافة بالتوكين واسم المستخدم</h3><span class="pill">لا يُحفظ</span></div><form id="tokenLoginForm" class="account-entry-form"><label><span>اسم المستخدم</span><input type="text" id="tokenLoginUsername" placeholder="@username" autocomplete="username" class="ltr-input" /></label><label><span>Authorization token</span><span class="secret-field"><input type="password" id="tokenLoginInput" placeholder="التوكين" class="ltr-input" autocomplete="off" spellcheck="false" /><button class="icon-control" id="tokenRevealBtn" type="button" aria-label="إظهار التوكين" aria-pressed="false"><svg><use href="/icons.svg#i-eye"></use></svg></button></span></label><button class="btn btn--accent">تحقق وأضف الحساب</button></form></article>
+              <article class="card"><div class="card-head"><h3>الدخول برقم الهاتف</h3><span class="pill pill--warn">OTP أول مرة</span></div><form id="phoneAuthStartForm" class="account-entry-form"><label><span>رقم الهاتف الدولي</span><input id="phoneAuthNumber" type="tel" placeholder="+201xxxxxxxxx" autocomplete="tel" class="ltr-input" /></label><button class="btn btn--accent">إرسال كود OTP</button></form><form id="phoneAuthCompleteForm" class="account-entry-form" hidden><label><span>كود التحقق</span><input id="phoneAuthCode" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="0000" class="ltr-input" /></label><button class="btn btn--accent">تأكيد وإضافة الحساب</button></form><p class="hint" id="phoneAuthStatus">لن يُرسل كود قبل ضغطك على الزر.</p></article>
+              <article class="card account-email-note"><div class="card-head"><h3>الدخول بالبريد</h3><span class="pill">غير مثبت</span></div><p>الموقع الرسمي الحالي يعرض تنزيل التطبيق ولا يعرض عقد تسجيل بريد للويب، كما أن توثيق الـAPI المتاح لا يثبت endpoint للبريد. لذلك لن نخترع طلبًا قد يعرّض الحساب للخطر.</p><a class="btn btn--ghost btn--sm" href="https://www.clubhouse.com/" target="_blank" rel="noreferrer">فتح موقع Clubhouse الرسمي</a></article>
+            </section>
+          </div>
+        </section>
+
+        <section class="panel" id="tab-settings">
+          <header class="workspace-heading">
+            <div class="workspace-title-block"><span class="workspace-heading-icon" aria-hidden="true"><svg><use href="/icons.svg#i-settings"></use></svg></span><div><h2>الإعدادات والأتمتة</h2><span>نظّم الحماية والأتمتة والمظهر والنسخ الاحتياطية من مكان واحد.</span></div></div>
+            <div class="workspace-heading-state"><span class="status-lamp" aria-hidden="true"></span><b>تُحفظ التغييرات محليًا</b></div>
+          </header>
+          <div class="settings-grid">
+            <div class="card account-settings-entry"><div class="card-head"><h3>الحساب النشط</h3><span class="pill" id="settingsActiveAccountBadge">جاري التحقق</span></div><p class="hint">بدّل بين حساب Clubdeck والحسابات المضافة، أو ابدأ تسجيل هاتف وOTP من صفحة مستقلة.</p><button class="btn btn--accent" id="openAccountsSettingsBtn" type="button"><svg><use href="/icons.svg#i-profile"></use></svg>فتح إدارة الحسابات</button></div>
+            <div class="card">
+              <div class="card-head"><h3>مفتاح Giphy API</h3><span class="pill">محلي فقط</span></div>
+              <p class="hint" style="margin-top:0">لازم عشان البحث عن GIFs جوه نافذة الرياكت. اعمل مفتاح مجاني من <a href="https://developers.giphy.com" target="_blank" rel="noreferrer">developers.giphy.com</a>. بيتخزن في ملف منفصل على جهازك بس، مش بيتزامن مع Clubhouse ومش بيتحفظ في Git.</p>
+              <form class="inline-form" id="giphyKeyForm">
+                <span class="secret-field" style="flex:1"><input type="password" id="giphyKeyInput" placeholder="Giphy API key" class="ltr-input" autocomplete="off" spellcheck="false" /><button class="icon-control" id="giphyKeyRevealBtn" type="button" aria-label="إظهار المفتاح" aria-pressed="false"><svg><use href="/icons.svg#i-eye"></use></svg></button></span>
+                <button class="btn btn--accent btn--sm">حفظ</button>
+              </form>
+              <p class="hint" id="giphyKeyStatus"></p>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <h3>قائمة VIP (رفع تلقائي)</h3>
+                <span class="toggle-switch" title="تفعيل/إيقاف الميزة"><input type="checkbox" id="vipAutoInviteToggle" /><span class="toggle-track"></span></span>
+              </div>
+              <form class="inline-form" id="vipForm">
+                <input type="text" placeholder="اسم أو يوزرنيم" id="vipInput" class="ltr-input" />
+                <button class="btn btn--accent btn--sm">إضافة</button>
+              </form>
+              <ul class="chip-list" id="vipList"></ul>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <h3>القايمة السودة (كتم/إنزال تلقائي)</h3>
+                <span class="toggle-switch" title="تفعيل/إيقاف الميزة"><input type="checkbox" id="blacklistAutoModToggle" /><span class="toggle-track"></span></span>
+              </div>
+              <form class="inline-form" id="blacklistForm">
+                <input type="text" placeholder="اسم أو كلمة محظورة" id="blacklistInput" class="ltr-input" />
+                <button class="btn btn--accent btn--sm">إضافة</button>
+              </form>
+              <ul class="chip-list" id="blacklistList"></ul>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <h3>محميون من الأكشن الجماعي</h3>
+                <span class="toggle-switch" title="تفعيل/إيقاف الميزة"><input type="checkbox" id="protectedListToggle" /><span class="toggle-track"></span></span>
+              </div>
+              <form class="inline-form" id="protectedForm">
+                <input type="text" placeholder="اسم كو-هوست تحميه من كتم/إنزال الكل" id="protectedInput" class="ltr-input" />
+                <button class="btn btn--accent btn--sm">إضافة</button>
+              </form>
+              <ul class="chip-list" id="protectedList"></ul>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>حدود تلقائية</h3></div>
+              <div class="inline-form">
+                <label style="flex:1">سقف وقت الكلام (دقايق)
+                  <input type="number" id="speakingLimitInput" min="1" class="ltr-input" style="width:100%" />
+                </label>
+                <span class="toggle-switch" title="تفعيل/إيقاف الميزة"><input type="checkbox" id="speakingLimitToggle" /><span class="toggle-track"></span></span>
+              </div>
+              <div class="inline-form">
+                <label style="flex:1">أقصى عدد سبيكرز
+                  <input type="number" id="speakerCapInput" min="1" class="ltr-input" style="width:100%" />
+                </label>
+                <span class="toggle-switch" title="تفعيل/إيقاف الميزة"><input type="checkbox" id="speakerCapToggle" /><span class="toggle-track"></span></span>
+              </div>
+              <label class="action-card action-card--toggle" style="padding:10px 14px">
+                <span class="action-icon"><svg aria-hidden="true"><use href="/icons.svg#i-hand"></use></svg></span>
+                <span class="action-title">شكر تلقائي لرافع الإيد</span>
+                <span class="toggle-switch"><input type="checkbox" id="autoThankToggle" /><span class="toggle-track"></span></span>
+              </label>
+              <label class="action-card action-card--toggle" style="padding:10px 14px;margin-top:8px">
+                <span class="action-icon"><svg aria-hidden="true"><use href="/icons.svg#i-mic"></use></svg></span>
+                <span class="action-title">دعوة تلقائية لأي حد يدخل الغرفة (بيحترم القايمة السودة)</span>
+                <span class="toggle-switch"><input type="checkbox" id="autoInviteAllToggle" /><span class="toggle-track"></span></span>
+              </label>
+              <label class="action-card action-card--toggle" style="padding:10px 14px;margin-top:8px">
+                <span class="action-icon"><svg aria-hidden="true"><use href="/icons.svg#i-bell"></use></svg></span>
+                <span class="action-title">تنبيه ترحيبي تلقائي لأي سبيكر جديد يطلع على المسرح</span>
+                <span class="toggle-switch"><input type="checkbox" id="welcomeSpeakersToggle" /><span class="toggle-track"></span></span>
+              </label>
+              <label class="action-card action-card--toggle" style="padding:10px 14px;margin-top:8px">
+                <span class="action-icon"><svg aria-hidden="true"><use href="/icons.svg#i-audience"></use></svg></span>
+                <span class="action-title">رفع تلقائي لأول واحد بالطابور فور ما مكان يفضى على المسرح</span>
+                <span class="toggle-switch"><input type="checkbox" id="autoFillVacantToggle" /><span class="toggle-track"></span></span>
+              </label>
+              <label class="action-card action-card--toggle" style="padding:10px 14px;margin-top:8px">
+                <span class="action-icon"><svg aria-hidden="true"><use href="/icons.svg#i-refresh"></use></svg></span>
+                <span class="action-title">دور تلقائي (لما حد ينزل، اللي بعده في الطابور يطلع)</span>
+                <span class="toggle-switch"><input type="checkbox" id="turnRotationToggle" /><span class="toggle-track"></span></span>
+              </label>
+              <div class="inline-form" style="margin-top:8px">
+                <label style="flex:1">دور تلقائي بتوقيت (دقايق)
+                  <input type="number" id="turnRotationTimerInput" min="1" class="ltr-input" style="width:100%" />
+                </label>
+                <span class="toggle-switch" title="تفعيل/إيقاف الميزة"><input type="checkbox" id="turnRotationTimerToggle" /><span class="toggle-track"></span></span>
+              </div>
+              <div class="inline-form" style="margin-top:8px">
+                <label style="flex:1">تنبيه لما الطابور يوصل لعدد
+                  <input type="number" id="queueSpikeInput" min="1" value="5" class="ltr-input" style="width:100%" />
+                </label>
+                <span class="toggle-switch" title="تفعيل/إيقاف الميزة"><input type="checkbox" id="queueSpikeToggle" /><span class="toggle-track"></span></span>
+              </div>
+            </div>
+            <div class="card" style="grid-column:1/-1">
+              <div class="card-head"><h3>جدولة أكشن</h3></div>
+              <form class="inline-form" id="scheduleForm">
+                <select id="scheduleType">
+                  <option value="mute-all">كتم الكل</option>
+                  <option value="lower-all">إنزال الجميع</option>
+                  <option value="end-room">إنهاء الغرفة</option>
+                  <option value="lock-handraise">قفل رفع الإيد</option>
+                  <option value="unlock-handraise">فتح رفع الإيد</option>
+                  <option value="reaction-all">رياكت جماعي</option>
+                </select>
+                <input type="text" id="scheduleReactionValue" placeholder="الرياكت (إيموجي/كلمة)" class="ltr-input" style="max-width:140px" hidden />
+                <input type="time" id="scheduleTime" />
+                <button class="btn btn--accent btn--sm">جدولة</button>
+              </form>
+              <ul class="chip-list" id="scheduleList"></ul>
+            </div>
+            <div class="card" style="grid-column:1/-1">
+              <div class="card-head"><h3>قوالب الرياكت</h3></div>
+              <form class="inline-form" id="presetForm">
+                <input type="text" placeholder="إيموجي أو كلمة" id="presetInput" class="ltr-input" />
+                <button class="btn btn--accent btn--sm">إضافة قالب</button>
+              </form>
+              <ul class="chip-list" id="presetSettingsList"></ul>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><h3>شكل اللوحة</h3></div>
+              <div class="inline-form">
+                <label style="flex:1">لون مميز
+                  <input type="color" id="accentPicker" value="#24D6E6" style="width:100%;height:34px;border:none;background:none;cursor:pointer" />
+                </label>
+              </div>
+              <label class="action-card action-card--toggle" style="padding:10px 14px">
+                <span class="action-icon"><svg aria-hidden="true"><use href="/icons.svg#i-menu"></use></svg></span>
+                <span class="action-title">وضع مضغوط</span>
+                <span class="toggle-switch"><input type="checkbox" id="densityToggle" /><span class="toggle-track"></span></span>
+              </label>
+              <label class="action-card action-card--toggle" style="padding:10px 14px;margin-top:8px">
+                <span class="action-icon"><svg aria-hidden="true"><use href="/icons.svg#i-bell"></use></svg></span>
+                <span class="action-title">تنبيهات سطح مكتب حقيقية</span>
+                <span class="toggle-switch"><input type="checkbox" id="desktopNotifToggle" /><span class="toggle-track"></span></span>
+              </label>
+              <div class="inline-form" style="margin-top:8px">
+                <input type="number" id="focusMinutesInput" value="10" min="1" style="max-width:80px" />
+                <button class="btn btn--sm" id="focusModeBtn" style="flex:1"><svg aria-hidden="true"><use href="/icons.svg#i-eye"></use></svg>وضع تركيز مؤقت</button>
+              </div>
+              <div class="inline-form" style="margin-top:8px">
+                <label style="flex:1">حجم الخط
+                  <input type="range" id="fontSizeSlider" min="13" max="19" value="15" style="width:100%" />
+                </label>
+              </div>
+              <label class="action-card action-card--toggle" style="padding:10px 14px;margin-top:8px">
+                <span class="action-icon"><svg aria-hidden="true"><use href="/icons.svg#i-eye"></use></svg></span>
+                <span class="action-title">وضع تباين عالي</span>
+                <span class="toggle-switch"><input type="checkbox" id="highContrastToggle" /><span class="toggle-track"></span></span>
+              </label>
+              <label class="action-card action-card--toggle" style="padding:10px 14px;margin-top:8px">
+                <span class="action-icon"><svg aria-hidden="true"><use href="/icons.svg#i-lock"></use></svg></span>
+                <span class="action-title">وضع قراءة فقط (يعطّل كل أزرار التأثير الحقيقي مؤقتاً)</span>
+                <span class="toggle-switch"><input type="checkbox" id="readOnlyModeToggle" /><span class="toggle-track"></span></span>
+              </label>
+              <div class="inline-form" style="margin-top:8px">
+                <button class="btn btn--sm" id="fullscreenBtn" style="flex:1"><svg aria-hidden="true"><use href="/icons.svg#i-monitor"></use></svg>شاشة كاملة</button>
+                <span class="pill ltr-num" id="sessionTimerBadge" title="مدة استخدام Clubhouse mod by Darhous الجلسة دي">0:00</span>
+              </div>
+              <div class="inline-form" style="margin-top:8px">
+                <label style="flex:1">مدة ظهور التنبيهات (ث)
+                  <input type="number" id="toastDurationInput" min="1" max="30" value="4" class="ltr-input" style="width:100%" />
+                </label>
+                <label style="flex:1">لون النجاح
+                  <input type="color" id="goodColorPicker" value="#34D399" style="width:100%;height:34px;border:none;background:none;cursor:pointer" />
+                </label>
+                <label style="flex:1">لون الخطر
+                  <input type="color" id="dangerColorPicker" value="#F0555F" style="width:100%;height:34px;border:none;background:none;cursor:pointer" />
+                </label>
+              </div>
+            </div>
+
+            <div class="card" style="grid-column:1/-1">
+              <div class="card-head"><h3><svg aria-hidden="true"><use href="/icons.svg#i-bell"></use></svg>مركز الإشعارات</h3></div>
+              <p class="hint" style="margin-top:0">نظرة موحّدة على تنبيهات المشرفين المباشرة (اللي كانت متفرّقة بين تبويب الأوامر المتقدمة والسجل). كل نوع بيظهر في التوست والسجل (🔔 تحت يسار الشاشة) دايمًا؛ فعّل "سطح المكتب" هنا لو عاوزه يبان حتى والتاب مش فاتح — محتاج المفتاح العام "تنبيهات سطح مكتب حقيقية" فوق شغّال الأول.</p>
+              <label class="action-card action-card--toggle" style="padding:9px 12px">
+                <span class="action-icon">👑</span>
+                <span class="action-title">مودريتور وحيد باقي في الغرفة</span>
+                <span class="toggle-switch"><input type="checkbox" id="desktopNotifyLoneModeratorToggle" /><span class="toggle-track"></span></span>
+              </label>
+              <label class="action-card action-card--toggle" style="padding:9px 12px;margin-top:6px">
+                <span class="action-icon">👥</span>
+                <span class="action-title">الغرفة وصلت للحد الأقصى للحضور</span>
+                <span class="toggle-switch"><input type="checkbox" id="desktopNotifyCapacityToggle" /><span class="toggle-track"></span></span>
+              </label>
+              <label class="action-card action-card--toggle" style="padding:9px 12px;margin-top:6px">
+                <span class="action-icon">🎙️</span>
+                <span class="action-title">ميكروفون صامت (Ghost Mic)</span>
+                <span class="toggle-switch"><input type="checkbox" id="desktopNotifyGhostMicToggle" /><span class="toggle-track"></span></span>
+              </label>
+              <label class="action-card action-card--toggle" style="padding:9px 12px;margin-top:6px">
+                <span class="action-icon">⛔</span>
+                <span class="action-title">حد من القايمة السودة دخل الغرفة</span>
+                <span class="toggle-switch"><input type="checkbox" id="desktopNotifyBlacklistJoinToggle" /><span class="toggle-track"></span></span>
+              </label>
+              <label class="action-card action-card--toggle" style="padding:9px 12px;margin-top:6px">
+                <span class="action-icon">👋</span>
+                <span class="action-title">سبيكر جديد طلع على المسرح</span>
+                <span class="toggle-switch"><input type="checkbox" id="desktopNotifyWelcomeSpeakerToggle" /><span class="toggle-track"></span></span>
+              </label>
+              <p class="hint">تنبيهات "صديق دخل أونلاين" و"ازدحام الطابور" ليهم مفتاح سطح مكتب خاص بيهم جوه تبويبي الشبكة الاجتماعية وطابور التحدث.</p>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><h3>نسخة احتياطية للإعدادات</h3></div>
+              <div class="inline-form">
+                <button class="btn btn--sm" id="exportSettingsBtn" style="flex:1"><svg aria-hidden="true"><use href="/icons.svg#i-download"></use></svg>تصدير كل الإعدادات</button>
+              </div>
+              <div class="inline-form" style="margin-top:8px">
+                <input type="file" id="importSettingsInput" accept="application/json" class="ltr-input" style="flex:1" />
+                <button class="btn btn--sm" id="importSettingsBtn"><svg aria-hidden="true"><use href="/icons.svg#i-download"></use></svg>استيراد</button>
+              </div>
+              <p class="hint">بيصدّر/يستورد VIP والقايمة السودة والمحميين والقوالب والاختصارات وشكل اللوحة في ملف JSON واحد.</p>
+              <div class="inline-form" style="margin-top:10px">
+                <input type="text" id="profileNameInput" placeholder="اسم ملف تعريف جديد" style="flex:1" />
+                <button class="btn btn--sm" id="saveProfileBtn"><svg aria-hidden="true"><use href="/icons.svg#i-check"></use></svg>حفظ كملف تعريف</button>
+              </div>
+              <ul class="chip-list" id="settingsProfilesList"></ul>
+              <button class="btn btn--sm" id="resetAllSettingsBtn" style="width:100%;margin-top:8px;border-color:var(--danger);color:var(--danger)"><svg aria-hidden="true"><use href="/icons.svg#i-alert"></use></svg>إعادة ضبط كل الإعدادات</button>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>سجل تغييرات الإعدادات</h3></div>
+              <div id="settingsChangeLog" class="audit-list"></div>
+              <p class="empty-hint" id="settingsChangeLogEmpty">مفيش تغييرات مسجّلة لسه.</p>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><h3>اختصارات مخصّصة</h3></div>
+              <div class="inline-form">
+                <span style="flex:1">كتم الكل</span>
+                <input type="text" id="shortcutMute" class="ltr-input" value="Ctrl+Alt+M" style="max-width:130px" readonly />
+              </div>
+              <div class="inline-form">
+                <span style="flex:1">رفع الكل</span>
+                <input type="text" id="shortcutInvite" class="ltr-input" value="Ctrl+Alt+I" style="max-width:130px" readonly />
+              </div>
+              <div class="inline-form">
+                <span style="flex:1">إنزال الجميع</span>
+                <input type="text" id="shortcutLower" class="ltr-input" value="Ctrl+Alt+L" style="max-width:130px" readonly />
+              </div>
+              <p class="hint">دوس جوه أي خانة وبعدين على الكومبينيشن اللي عايزه عشان تغيّرها.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="tab-stats">
+          <header class="workspace-heading">
+            <div class="workspace-title-block"><span class="workspace-heading-icon" aria-hidden="true"><svg><use href="/icons.svg#i-chart"></use></svg></span><div><h2>الإحصاءات</h2><span>اقرأ نمو الحضور وصحة الغرفة وأداء الجلسة الحالية.</span></div></div>
+          </header>
+          <div class="stat-row">
+            <div class="stat-tile"><div class="stat-num" id="statAll">0</div><div class="stat-label">إجمالي الحضور</div></div>
+            <div class="stat-tile"><div class="stat-num" id="statSpeakers">0</div><div class="stat-label">متكلمون</div></div>
+            <div class="stat-tile"><div class="stat-num" id="statListeners">0</div><div class="stat-label">مستمعون</div></div>
+            <div class="stat-tile"><div class="stat-num" id="statQueue">0</div><div class="stat-label">رافعون إيدهم</div></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h3>الحضور عبر الوقت</h3>
+              <button class="btn btn--ghost btn--sm" id="exportChartImgBtn"><svg aria-hidden="true"><use href="/icons.svg#i-download"></use></svg>تصدير كصورة</button>
+            </div>
+            <canvas id="statsChart" width="900" height="220"></canvas>
+            <p class="hint">معدل النمو: <span id="growthRate">—</span> · تحذير مبكر: <span id="declineWarning">—</span></p>
+          </div>
+          <div class="settings-grid">
+            <div class="card">
+              <div class="card-head"><h3>أطول متكلمين (الجلسة دي)</h3></div>
+              <div id="topTalkersList" class="user-list"></div>
+              <p class="empty-hint" id="topTalkersEmpty">لسه مفيش بيانات كفاية.</p>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>صحة الغرفة</h3></div>
+              <table class="kbd-table">
+                <tr><td>نسبة المستمع للمتكلم</td><td id="healthRatio">—</td></tr>
+                <tr><td>أعلى حضور وصلنا له</td><td id="healthPeak" class="ltr-num">—</td></tr>
+                <tr><td>مدة الاتصال بيك</td><td id="healthDuration" class="ltr-num">—</td></tr>
+                <tr><td>نسبة قبول رفع الإيد</td><td id="acceptRate">—</td></tr>
+              </table>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>معدل الكتم لكل سبيكر</h3></div>
+              <div id="muteRateList" class="audit-list"></div>
+              <p class="empty-hint" id="muteRateEmpty">مفيش بيانات كتم لسه.</p>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>مقارنة بمتوسط جلساتك السابقة</h3></div>
+              <table class="kbd-table">
+                <tr><td>متوسط أعلى حضور</td><td id="avgPeakAllTime">—</td></tr>
+                <tr><td>الجلسة الحالية مقابل المتوسط</td><td id="currentVsAvg">—</td></tr>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="tab-archive">
+          <header class="workspace-heading">
+            <div class="workspace-title-block"><span class="workspace-heading-icon" aria-hidden="true"><svg><use href="/icons.svg#i-archive"></use></svg></span><div><h2>الأرشيف</h2><span>ارجع إلى الجلسات السابقة وصدّر التقارير وسجل الحضور.</span></div></div>
+            <div class="workspace-heading-actions">
+              <button class="btn btn--ghost btn--sm" id="exportSessionBtn"><svg aria-hidden="true"><use href="/icons.svg#i-download"></use></svg>تقرير الجلسة</button>
+              <button class="btn btn--ghost btn--sm" id="exportAttendeesCsvBtn"><svg aria-hidden="true"><use href="/icons.svg#i-download"></use></svg>الحضور CSV</button>
+            </div>
+          </header>
+          <div class="card-head" style="margin-bottom:10px">
+            <h3>الجلسات المحفوظة</h3>
+          </div>
+          <input type="text" id="archiveFilterInput" placeholder="بحث بالاسم أو التاريخ…" style="margin-bottom:10px;width:100%" />
+          <div id="archiveList" class="archive-list"></div>
+          <p class="empty-hint" id="archiveEmpty">لسه مفيش غرف متأرشفة.</p>
+          <div class="card" id="archiveDetailPanel" hidden>
+            <div class="card-head">
+              <h3 id="archiveDetailTitle">تفاصيل الأرشيف</h3>
+              <button class="btn btn--ghost btn--sm" id="printArchiveBtn"><svg aria-hidden="true"><use href="/icons.svg#i-download"></use></svg>تقرير قابل للطباعة</button>
+              <button class="btn btn--ghost btn--sm" id="closeArchiveDetail" aria-label="إغلاق تفاصيل الأرشيف"><svg aria-hidden="true"><use href="/icons.svg#i-close"></use></svg></button>
+            </div>
+            <div id="archiveDetailBody"></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h3>سجل الأكشنات (Audit Log)</h3>
+              <button class="btn btn--ghost btn--sm" id="exportAuditCsvBtn">تصدير CSV</button>
+            </div>
+            <div id="auditList" class="audit-list"></div>
+          </div>
+        </section>
+
+        <section class="panel" id="tab-log">
+          <header class="workspace-heading">
+            <div class="workspace-title-block"><span class="workspace-heading-icon" aria-hidden="true"><svg><use href="/icons.svg#i-log"></use></svg></span><div><h2>سجل العمليات</h2><span>راقب نداءات الـAPI وزمن الاستجابة والأخطاء أثناء التشغيل.</span></div></div>
+            <div class="workspace-heading-state"><span class="status-lamp" aria-hidden="true"></span><b>للتشخيص الفني</b></div>
+          </header>
+          <div class="card-head" style="margin-bottom:8px">
+            <h3>سجل نداءات الـ API الحية <span class="pill ltr-num" id="logAvgLatency">—</span></h3>
+            <span class="pill pill--warn">للتشخيص</span>
+          </div>
+          <div class="inline-form" style="margin-bottom:8px">
+            <input type="text" id="logSearchInput" placeholder="بحث نصي في السجل…" style="flex:1" />
+            <select id="logFilterSelect">
+              <option value="all">الكل</option>
+              <option value="ok">نجاح بس</option>
+              <option value="err">أخطاء بس</option>
+              <option value="get">GET بس</option>
+              <option value="post">POST بس</option>
+            </select>
+            <label class="chip-toggle"><input type="checkbox" id="logPauseToggle" /> إيقاف مؤقت</label>
+            <label class="chip-toggle"><input type="checkbox" id="logCompactToggle" /> وضع مضغوط</label>
+            <button class="btn btn--ghost btn--sm" id="exportLogBtn"><svg aria-hidden="true"><use href="/icons.svg#i-download"></use></svg>تصدير</button>
+            <button class="btn btn--ghost btn--sm" id="clearLogBtn"><svg aria-hidden="true"><use href="/icons.svg#i-trash"></use></svg>مسح</button>
+          </div>
+          <div id="logConsole" class="log-console"></div>
+        </section>
+
+        <footer class="app-footer" dir="ltr">
+          <p class="app-footer-credit">Designed &amp; Developed by <a href="mailto:ahmeddarhous@gmail.com">Ahmed Darhous</a></p>
+          <div class="app-footer-contact">
+            <a class="app-footer-contact-link" href="tel:+201030002331" aria-label="Call Ahmed Darhous">
+              <svg aria-hidden="true"><use href="/icons.svg#i-phone"></use></svg><span>+20 103 000 2331</span>
+            </a>
+            <a class="app-footer-contact-link" href="mailto:ahmeddarhous@gmail.com" aria-label="Email Ahmed Darhous">
+              <svg aria-hidden="true"><use href="/icons.svg#i-mail"></use></svg><span>ahmeddarhous@gmail.com</span>
+            </a>
+          </div>
+          <div class="app-footer-social">
+            <a href="https://www.instagram.com/darhous/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg aria-hidden="true"><use href="/icons.svg#i-instagram"></use></svg></a>
+            <a href="https://www.linkedin.com/in/darhous/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg aria-hidden="true"><use href="/icons.svg#i-linkedin"></use></svg></a>
+            <a href="https://www.facebook.com/ahmed.darhous" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg aria-hidden="true"><use href="/icons.svg#i-facebook"></use></svg></a>
+            <a href="https://wa.me/201030002331" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><svg aria-hidden="true"><use href="/icons.svg#i-whatsapp"></use></svg></a>
+            <a href="https://github.com/darhous" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg aria-hidden="true"><use href="/icons.svg#i-github"></use></svg></a>
+            <a href="https://darhous.github.io/portofolio/" target="_blank" rel="noopener noreferrer" aria-label="Portfolio"><svg aria-hidden="true"><use href="/icons.svg#i-globe"></use></svg></a>
+          </div>
+        </footer>
+
+      </main>
+    </div>
+  </div>
+
+  <nav class="mobile-dock" aria-label="اختصارات مساحات العمل">
+    <button class="nav-item active" type="button" data-tab="hallway"><svg aria-hidden="true"><use href="/icons.svg#i-dashboard"></use></svg><span>الغرف</span></button>
+    <button class="nav-item" type="button" data-tab="currentroom"><svg aria-hidden="true"><use href="/icons.svg#i-logo"></use></svg><span>الغرفة</span></button>
+    <button class="nav-item" type="button" data-tab="queue"><svg aria-hidden="true"><use href="/icons.svg#i-queue"></use></svg><span>الطابور</span><span class="dock-badge" id="mobileQueueBadge" hidden>0</span></button>
+    <button class="nav-item" type="button" data-tab="members"><svg aria-hidden="true"><use href="/icons.svg#i-users"></use></svg><span>الأعضاء</span></button>
+    <button class="dock-more" id="mobileWorkspaceBtn" type="button" aria-label="كل مساحات العمل" aria-controls="sidebar" aria-expanded="false"><svg aria-hidden="true"><use href="/icons.svg#i-menu"></use></svg><span>المزيد</span></button>
+  </nav>
+
+  <div class="modal-backdrop" id="reactionModal" hidden>
+    <div class="modal">
+      <div class="modal-head">
+        <h3>رياكت لـ <span id="reactionTarget"></span></h3>
+        <button class="btn btn--ghost btn--sm" id="reactionClose" aria-label="إغلاق نافذة التفاعل"><svg aria-hidden="true"><use href="/icons.svg#i-close"></use></svg></button>
+      </div>
+      <div class="reaction-combo-banner" id="emojiComboBanner">
+        <span aria-hidden="true">🔥❤️</span>
+        <span><b>مصفوفة إيموجي كومبو</b><small id="emojiComboStatus">كل زر يرسل 100 من نفس الإيموجي — 10 صفوف × 10</small></span>
+      </div>
+      <div class="emoji-combo-matrix" id="emojiComboMatrix" role="group" aria-label="كومبوهات إيموجي جاهزة"></div>
+      <div class="preset-row" id="modalPresetRow"></div>
+      <div class="emoji-grid" id="emojiGrid"></div>
+      <div class="reaction-room-catalog" id="reactionRoomCatalog" hidden>
+        <div class="card-head"><h3>🔊 صوتيات وتفاعلات الغرفة الحقيقية</h3></div>
+        <p class="hint" style="margin-top:0">دي القوائم اللي Clubhouse نفسه بيرجعها للغرفة المتصلة دلوقتي (مش قايمة عامة) — لو فيها تفاعل صوتي، الصوت بيتشغّل عند الطرف التاني جوه تطبيق Clubhouse نفسه، مش جوه Clubhouse mod by Darhous.</p>
+        <div class="emoji-grid" id="audioReactionGrid"></div>
+      </div>
+      <div class="card" id="gifReactionCard">
+        <div class="card-head"><h3>🎞️ رياكت GIF</h3><span class="pill">عقد مرشح</span></div>
+        <form class="inline-form" id="gifSearchForm">
+          <input type="search" id="gifSearchInput" placeholder="ابحث في Giphy (مثلاً: قلب، تصفيق)…" style="flex:1" />
+          <button class="btn btn--sm">بحث</button>
+        </form>
+        <ul class="chip-list" id="gifSearchHistoryList"></ul>
+        <div class="gif-results-grid" id="gifSearchResults"></div>
+        <p class="empty-hint" id="gifSearchEmpty">ابحث بكلمة عشان تشوف نتايج من Giphy — محتاج مفتاح Giphy API متسجّل في الإعدادات.</p>
+        <details style="margin-top:8px">
+          <summary class="hint" style="cursor:pointer">أو الصق معرّف/رابط GIF يدويًا</summary>
+          <form class="inline-form" id="gifReactionForm" style="margin-top:8px">
+            <input type="text" id="gifReactionInput" placeholder="giphy ID أو رابط giphy.com/gifs/..." class="ltr-input" style="flex:1" />
+            <button class="btn btn--accent btn--sm">إرسال</button>
+          </form>
+        </details>
+      </div>
+      <div class="reaction-burst-options" aria-label="تفاعلات جاهزة كبيرة">
+        <button class="reaction-burst-option" id="reactionFiftyHeartsBtn" type="button">
+          <span class="reaction-burst-option__sample" aria-hidden="true">❤️❤️❤️</span>
+          <span><b>50 قلب كجملة</b><small>إرسالها مرة واحدة للهدف المختار</small></span>
+          <svg aria-hidden="true"><use href="/icons.svg#i-reaction"></use></svg>
+        </button>
+      </div>
+      <section class="reaction-composer" aria-label="تجربة كتابة رياكت مخصص">
+        <div class="reaction-composer-toolbar" role="group" aria-label="تنسيق معاينة الرياكت">
+          <label class="composer-control" for="reactionFontSelect"><span>الخط</span>
+            <select id="reactionFontSelect">
+              <option value="ui">واجهة Clubhouse mod by Darhous</option>
+              <option value="reading">قراءة عربية</option>
+              <option value="emphasis">عريض للتأكيد</option>
+            </select>
+          </label>
+          <label class="composer-control" for="reactionColorInput"><span>اللون</span>
+            <input type="color" id="reactionColorInput" value="#eef9fb" aria-label="لون معاينة النص" />
+          </label>
+          <button class="btn btn--ghost btn--sm composer-emoji-toggle" type="button" id="reactionEmojiToggle" aria-controls="reactionEmojiKeyboard" aria-expanded="false">لوحة الإيموجي</button>
+        </div>
+        <form class="inline-form reaction-composer-form" id="reactionCustomForm">
+          <textarea id="reactionCustomInput" placeholder="اكتب كلمة أو أضف إيموجي…" dir="auto" autocomplete="off" rows="3"></textarea>
+          <button class="btn btn--accent btn--sm">إرسال كنص</button>
+        </form>
+        <div class="reaction-emoji-keyboard" id="reactionEmojiKeyboard" role="group" aria-label="إيموجي لإدخاله في الرياكت" hidden></div>
+        <div class="reaction-text-preview" aria-live="polite">
+          <span>معاينة محلية</span>
+          <output id="reactionTextPreview">اكتب كلمة لتظهر هنا</output>
+        </div>
+        <p class="hint reaction-composer-note">التنسيق للمعاينة داخل Clubhouse mod by Darhous فقط؛ الـAPI الحالي يرسل النص أو الإيموجي كقيمة نصية بدون لون أو خط.</p>
+      </section>
+      <button class="btn btn--ghost btn--sm" id="reactionComboBtn" style="width:100%;margin-top:8px"><svg aria-hidden="true"><use href="/icons.svg#i-reaction"></use></svg>كومبو: إرسال 3 تفاعلات متتالية</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="presetsModal" hidden>
+    <div class="modal">
+      <div class="modal-head">
+        <h3>تعديل قوالب الرياكت</h3>
+        <button class="btn btn--ghost btn--sm" id="presetsModalClose" aria-label="إغلاق القوالب"><svg aria-hidden="true"><use href="/icons.svg#i-close"></use></svg></button>
+      </div>
+      <form class="inline-form" id="presetFormModal">
+        <input type="text" placeholder="إيموجي أو كلمة" id="presetInputModal" class="ltr-input" />
+        <button class="btn btn--accent btn--sm">إضافة</button>
+      </form>
+      <ul class="chip-list" id="presetModalList"></ul>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="profilePreviewModal" hidden>
+    <div class="modal">
+      <div class="modal-head">
+        <h3>معاينة بروفايل</h3>
+        <button class="btn btn--ghost btn--sm" id="profilePreviewClose" aria-label="إغلاق المعاينة"><svg aria-hidden="true"><use href="/icons.svg#i-close"></use></svg></button>
+      </div>
+      <div id="profilePreviewBody">بنجيب البيانات…</div>
+    </div>
+  </div>
+
+  <div class="palette-backdrop" id="paletteBackdrop" hidden>
+    <div class="palette">
+      <input type="text" id="paletteInput" placeholder="روح لأي حاجة… تبويب، هاوس، غرفة، شخص" class="ltr-input" style="direction:rtl;text-align:right" />
+      <div class="palette-results" id="paletteResults"></div>
+    </div>
+  </div>
+
+  <button class="btn btn--ghost btn--sm toast-history-btn" id="toastHistoryBtn" type="button" aria-label="فتح سجل التنبيهات" aria-expanded="false" title="سجل التنبيهات"><svg aria-hidden="true"><use href="/icons.svg#i-bell"></use></svg><span class="nav-badge" id="notifUnreadBadge" hidden>0</span></button>
+  <aside class="history-drawer" id="historyDrawer" aria-label="سجل التنبيهات" hidden></aside>
+
+  <button class="btn btn--ghost btn--sm friends-bell-btn" id="friendsBellBtn" type="button" aria-label="إشعارات الأصدقاء" aria-expanded="false" title="إشعارات الأصدقاء"><svg aria-hidden="true"><use href="/icons.svg#i-bell"></use></svg><span class="nav-badge" id="friendsBellBadge" hidden>0</span></button>
+  <aside class="history-drawer" id="friendsBellPopover" aria-label="إشعارات الأصدقاء" hidden></aside>
+
+  <div class="toast-stack" id="toastStack" role="region" aria-label="التنبيهات" aria-live="polite"></div>
+  <div class="effects-particle-layer" id="effectsParticleLayer" aria-hidden="true"></div>
+
+  <dialog class="action-dialog" id="actionDialog" aria-labelledby="actionDialogTitle" aria-describedby="actionDialogDescription">
+    <form method="dialog" class="dialog-panel">
+      <div class="dialog-signal" id="actionDialogSignal" aria-hidden="true"><svg><use href="/icons.svg#i-alert"></use></svg></div>
+      <div class="dialog-copy">
+        <h2 id="actionDialogTitle">هل تريد المتابعة؟</h2>
+        <p id="actionDialogDescription"></p>
+        <dl class="dialog-impact" id="actionDialogImpact" hidden>
+          <div><dt>الهدف</dt><dd id="actionDialogTarget"></dd></div>
+          <div><dt>النتيجة</dt><dd id="actionDialogResult"></dd></div>
+        </dl>
+      </div>
+      <div class="dialog-actions">
+        <button class="btn btn--ghost" type="button" data-dialog-cancel>إلغاء</button>
+        <button class="btn btn--danger" id="actionDialogConfirm" value="confirm">تأكيد الإجراء</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="action-dialog" id="inputDialog" aria-labelledby="inputDialogTitle" aria-describedby="inputDialogDescription">
+    <form method="dialog" class="dialog-panel" id="inputDialogForm">
+      <div class="dialog-signal dialog-signal--info" aria-hidden="true"><svg><use href="/icons.svg#i-info"></use></svg></div>
+      <div class="dialog-copy">
+        <h2 id="inputDialogTitle">أدخل القيمة</h2>
+        <p id="inputDialogDescription"></p>
+        <label class="dialog-field"><span id="inputDialogLabel">القيمة</span><input id="inputDialogValue" type="text" autocomplete="off" /></label>
+      </div>
+      <div class="dialog-actions">
+        <button class="btn btn--ghost" type="button" data-dialog-cancel>إلغاء</button>
+        <button class="btn btn--accent" value="confirm">متابعة</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="/vendor/gsap.min.js"></script>
+  <script src="/vendor/Flip.min.js"></script>
+  <script src="/app.js?v=17"></script>
+  <script type="module" src="/modules/room-chat.js?v=1"></script>
+  <script type="module" src="/modules/ui-shell.js?v=7"></script>
+  <script type="module" src="/modules/motion.js?v=1"></script>
+</body>
+</html>

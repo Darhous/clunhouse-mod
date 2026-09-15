@@ -1,0 +1,14 @@
+{
+  "name": "clubhouse-mod-by-darhous",
+  "version": "0.1.0",
+  "description": "Clubhouse mod by Darhous — an independent moderator control surface for Clubhouse rooms.",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "gsap": "^3.15.0"
+  }
+}
